@@ -1,0 +1,22 @@
+PSTOPIC
+    about_PSSlack
+
+SHORT DESCRIPTION
+    PSSlack allows you to work with the Slack API through PowerShell functions
+
+LONG DESCRIPTION
+    PSSlack allows you to work with the Slack API through PowerShell functions
+
+    You can find API documentation here:
+        https://api.slack.com/web
+        https://api.slack.com/methods
+
+DETAILED DESCRIPTION
+
+    Using PSSlack requires that you have a token or web hook URI from Slack.
+    
+    Details on authentication via tokens in Slack:
+        https://api.slack.com/docs/oauth
+        
+    Obtain a simple test token for Slack:
+        https://api.slack.com/docs/oauth-test-tokens
