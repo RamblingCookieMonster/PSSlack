@@ -42,6 +42,6 @@
     }
 
     #Write the global variable and the xml
-    $Script:PSSlack | Export-Clixml -Path "$PSScriptRoot\PSSlack.xml" -force
+    $Script:PSSlack | Export-Clixml -Path "$ModuleRoot\PSSlack.xml" -force
 
 }

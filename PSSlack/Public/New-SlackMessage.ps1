@@ -28,6 +28,12 @@
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
+    .PARAMETER IconEmoji
+        Emoji to use as the icon for this message.
+        Overrides icon_url.
+        
+        Must be used in conjunction with as_user set to false, otherwise ignored
+
     .PARAMETER AsUser
         Use true to post the message as the authed user, instead of as a bot. Defaults to false.
         
@@ -66,7 +72,8 @@
         [string]$Channel,
         [string]$Text,
         [string]$Username, 
-        [string]$IconUrl, 
+        [string]$IconUrl,
+        [string]$IconEmoji,
         [switch]$AsUser,
         [switch]$LinkNames,
 
@@ -86,9 +93,19 @@
         [System.Collections.Hashtable[]]
         $Attachments
     )
+    Begin
+    {
+        $AllAttachments = @()
+    }
     Process
     {
-    
+        foreach($Attachment in $Attachments)
+        {
+            $AllAttachments += $Attachments
+        }
+    }
+    End
+    {
         $body = @{}
 
         switch ($psboundparameters.keys) {
@@ -97,18 +114,15 @@
             'username'    { $body.username     = $username}
             'as_user'     { $body.asuser       = $AsUser}
             'iconurl'     { $body.icon_url     = $iconurl}
-            'link_names'  { $body.link_names   = 1}
+            'iconemoji'   { $body.icon_emoji   = $iconemoji}
+            'linknames'   { $body.link_names   = 1}
             'Parse'       { $body.Parse        = $Parse}
             'UnfurlLinks' { $body.Unfurl_Links = $UnfurlLinks}
             'UnfurlMedia' { $body.Unfurl_Media = $UnfurlMedia}
             'iconurl'     { $body.icon_url     = $iconurl}
-            'attachments' { $body.attachments   = @($Attachments)}
+            'attachments' { $body.attachments   = @($AllAttachments)}
         }
         
         Add-ObjectDetail -InputObject $body -TypeName PSSlack.Message
-
-        #$json = $Notification | ConvertTo-Json -Depth 4
-        #$json = [regex]::replace($json,'\\u[a-fA-F0-9]{4}',{[char]::ConvertFromUtf32(($args[0].Value -replace '\\u','0x'))})
-        #$json = $json -replace "\\\\", "\"
     }
 }

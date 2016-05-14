@@ -29,7 +29,7 @@
     }
     else
     {
-        Import-Clixml -Path "$PSScriptRoot\PSSlack.xml"
+        Import-Clixml -Path "$ModuleRoot\PSSlack.xml"
     }
 
 }

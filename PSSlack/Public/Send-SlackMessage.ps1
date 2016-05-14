@@ -62,55 +62,70 @@
         Slack
     #>
 
-    [cmdletbinding(DefaultParameterSetName = 'Param')]
+    [cmdletbinding(DefaultParameterSetName = 'SlackMessage')]
     param (
         [string]$Token = $Script:PSSlack.Token,
         [string]$Uri,
 
         [PSTypeName('PSSlack.Message')]
-        [parameter(ParameterSetName = 'SlackMessage')]
+        [parameter(ParameterSetName = 'SlackMessage',
+                   ValueFromPipeline = $True)]
         $SlackMessage,
+
         $Channel,
 
         [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True,
                    Position = 1)]
         $Text,
 
-        [parameter(ParameterSetName = 'Param')]
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         $Username, 
 
-        [parameter(ParameterSetName = 'Param')]
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         $IconUrl, 
 
-        [parameter(ParameterSetName = 'Param')]
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         [switch]$AsUser,
 
-        [parameter(ParameterSetName = 'Param')]
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         [switch]$LinkNames,
 
-        [parameter(ParameterSetName = 'Param')]
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         [validateset('full','none')]
         [string]$Parse = 'none',
 
-        [parameter(ParameterSetName = 'Param')]
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         [validateset($True, $False)]
         [bool]$UnfurlLinks,
 
-        [parameter(ParameterSetName = 'Param')]
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         [validateset($True, $False)]
         [bool]$UnfurlMedia,
 
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         [PSTypeName('PSSlack.MessageAttachment')]
         [System.Collections.Hashtable[]]$Attachments
     )
-    end {
-
-        $body = @{
-            channel = $channel
-        }
-
+    begin
+    {
+        $Messages = @()
+    }
+    process
+    {
         if($PSCmdlet.ParameterSetName -eq 'Param')
         {
+
+            $body = @{ channel = $channel }
+            
             switch ($psboundparameters.keys) {
                 'text'        {$body.text     = $text}
                 'username'    {$body.username = $username}
@@ -122,39 +137,48 @@
                 'UnfurlMedia' {$body.unfurl_media = $UnfurlMedia}
                 'attachments' {$body.attachments = $Attachments}
             }
+            $Messages += $Body
         }
         else
         {
-            $body = $SlackMessage
-        }
-
-        if($Token -or ($Script:PSSlack.Token -and -not $Uri))
-        {
-
-            if($body.attachments)
+            foreach($Message in $SlackMessage)
             {
-                $body.attachments = ConvertTo-Json -InputObject @($body.attachments) -Depth 4 -Compress
+                $Messages += $SlackMessage
             }
+        }
+    }
+    end
+    {
+        foreach($Message in $Messages)
+        {
+            if($Token -or ($Script:PSSlack.Token -and -not $Uri))
+            {
             
-            Write-Verbose "Send-SlackApi -Body $($Body | Format-List | Out-String)"
-            $response = Send-SlackApi -Method chat.postMessage -Body $body -Token $Token
-    
-            if ($response.ok)
-            {
-                $link = "$($Script:PSSlack.ArchiveUri)/$($response.channel)/p$($response.ts -replace '\.')"
-                $response | Add-Member -MemberType NoteProperty -Name link -Value $link
+                if($Message.attachments)
+                {
+                    $Message.attachments = ConvertTo-Json -InputObject @($Message.attachments) -Depth 4 -Compress
+                }
+                
+                Write-Verbose "Send-SlackApi -Body $($Message | Format-List | Out-String)"
+                $response = Send-SlackApi -Method chat.postMessage -Body $Message -Token $Token
+            
+                if ($response.ok)
+                {
+                    $link = "$($Script:PSSlack.ArchiveUri)/$($response.channel)/p$($response.ts -replace '\.')"
+                    $response | Add-Member -MemberType NoteProperty -Name link -Value $link
+                }
+            
+                $response
             }
-    
-            $response
-        }
-        Elseif($Uri -or $Script:PSSlack.Uri)
-        {
-            $json = ConvertTo-Json -Depth 4 -Compress -InputObject $body
-            Invoke-RestMethod -Method Post -Body $json -Uri $Uri
-        }
-        else
-        {
-            Throw 'No Uri or Token specified.  Specify a Uri or Token in the parameters or via Set-PSSlackConfig'
+            Elseif($Uri -or $Script:PSSlack.Uri)
+            {
+                $json = ConvertTo-Json -Depth 4 -Compress -InputObject $Message
+                Invoke-RestMethod -Method Post -Body $json -Uri $Uri
+            }
+            else
+            {
+                Throw 'No Uri or Token specified.  Specify a Uri or Token in the parameters or via Set-PSSlackConfig'
+            }
         }
     }
 }
