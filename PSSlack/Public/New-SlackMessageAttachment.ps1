@@ -74,52 +74,99 @@ function New-SlackMessageAttachment
 
         The formatting is described here: https://get.slack.help/hc/en-us/articles/202288908-How-can-I-add-formatting-to-my-messages-
 
-    .EXAMPLE
-       New-SlackMessageAttachment -Fallback "Your app sucks it should process attachments" -Title "Service Error" -Value "Service down for server contoso1" -Severity danger -channel "Operations" -UserName "Slack Powershell Bot"
-   
-       This command would generate the following output in Powershell:
-        -------------------------------------------------------------------------------
-
-        Name                           Value                                                                                                                                                                                  
-        ----                           -----                                                                                                                                                                                  
-        username                       Slack Powershell Bot                                                                                                                                                                   
-        channel                        Operations                                                                                                                                                                             
-        icon_url                                                                                                                                                                                                              
-        attachments                    {System.Collections.Hashtable}
+    .PARAMETER ExistingAttachment
+        One or more attachments to add this attachment to.
+        
+        Allows you to chain calls to this function:
+            New-SlackMessageAttachment ... | New-SlackMessageAttachment ...
 
     .EXAMPLE
-        (New-SlackMessageAttachment -Fallback "Your app sucks it should process attachments" -Title "Service Error" -Value "Service down for server contoso1" -Severity danger -channel "random" -UserName "Slack Powershell Bot").attachments
-
-        This command allows us to see inside the attachments Hashtable. It's output looks like the following:
-        -------------------------------------------------------------------------------
-
-        Name                           Value                                                                                                                                                                                  
-        ----                           -----                                                                                                                                                                                  
-        color                          danger                                                                                                                                                                                 
-        fallback                       Your app sucks it should process attachments                                                                                                                                           
-        fields                         {System.Collections.Hashtable}
-
+        # This is a simple example illustrating some common options
+        # when constructing a message attachment
+        # giving you a richer message 
+        $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+        
+        New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+                                   -Title 'The System Is Down' `
+                                   -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                   -Text 'Please Do The Needful' `
+                                   -Pretext 'Everything is broken' `
+                                   -AuthorName 'SCOM Bot' `
+                                   -AuthorIcon 'http://ramblingcookiemonster.github.io/images/tools/wrench.png' `
+                                   -Fallback 'Your client is bad' |
+            New-SlackMessage -Channel '@wframe' `
+                             -IconEmoji :bomb: |
+            Send-SlackMessage -Token $Token
+        
+        # Create a message attachment with details about an alert
+        # Attach this to a slack message sending to the devnull channel
+        # Send the newly created message using a token
 
     .EXAMPLE
-        $MyFields = @(
-            @{
-                title = 'Assigned To'
-                value = 'John Doe'
-                short = 'true'
+        # This example demonstrates that you can chain new attachments
+        # together to form a multi-attachment message
+        
+        $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+        
+        New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+                                   -Title 'The System Is Down' `
+                                   -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                   -Text 'Everybody panic!' `
+                                   -Pretext 'Everything is broken' `
+                                   -Fallback 'Your client is bad' |
+            New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+                                       -Title 'The Other System Is Down' `
+                                       -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                       -Text 'Please Do The Needful' `
+                                       -Fallback 'Your client is bad' |
+            New-SlackMessage -Channel '@wframe' `
+                             -IconEmoji :bomb: `
+                             -AsUser `
+                             -Username 'SCOM Bot' |
+            Send-SlackMessage -Token $Token
+        
+        # Create an attachment, create another attachment,
+        # add these to a message,
+        # and send with a token
+
+    .EXAMPLE
+
+        # This example illustrates a pattern where you might
+        # want to send output from a script; you might
+        # include errors, successful items, or other output
+        
+        # Pretend we're in a script, and caught an exception of some sort
+        $Fail = [pscustomobject]@{
+            samaccountname = 'bob'
+            operation = 'Remove privileges'
+            status = "An error message"
+            timestamp = (Get-Date).ToString()
+        }
+        
+        # Create an array from the properties in our fail object
+        $Fields = @()
+        foreach($Prop in $Fail.psobject.Properties.Name)
+        {
+            $Fields += @{
+                title = $Prop
+                value = $Fail.$Prop
+                short = $true
             }
-            @{
-                title = 'Priority'
-                value = 'Super Critical!'
-                short = 'true'
-            }
-        )
-
-        $notification = New-SlackMessageAttachment -Fallback "A plaintext message" -Title "Description" -Text "Some text that will appear above the Fields" -Fields $MyFields
-        Send-SlackMessage -Url "https://yourname.slack.com/path/to/hookintegrations" -SlackMessage $notification
-
-        ----------------------------------------------------------------------
-        In this example, $MyFields is defined as an Array. Inside that array are two separate hashtables with the two parameters that are required for a field. 
-        Since the "short" boolean parameter has been speified these two fields will be displayed next to each other in Slack. 
+        }
+        
+        $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+        
+        # Construct and send the message!
+        New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+                                   -Title 'Failed to process account' `
+                                   -Fields $Fields `
+                                   -Fallback 'Your client is bad' |
+            New-SlackMessage -Channel 'devnull' |
+            Send-SlackMessage -Uri $uri
+        
+        # We build up a pretend error object, and send each property to a 'Fields' array
+        # Creates an attachment with the fields from our error
+        # Creates a message fromthat attachment and sents it with a uri
 
     .LINK
     https://api.slack.com/docs/attachments
@@ -131,6 +178,10 @@ function New-SlackMessageAttachment
     [OutputType([System.Collections.Hashtable])]
     Param
     (
+        [Parameter(ValueFromPipeline = $True)]
+        [PSTypeName('PSSlack.MessageAttachment')]
+        $ExistingAttachment,
+
         [Parameter(Mandatory=$true,
                    Position=0)]
         [String]$Fallback,
@@ -204,6 +255,16 @@ function New-SlackMessageAttachment
             'ThumbUrl' {$Attachment.thumb_url = $ThumbURL}
             'MarkDownFields' {$Attachment.mrkdwn_in = @($MarkDownFields)}
         }
-        Add-ObjectDetail -InputObject $Attachment -TypeName 'PSSlack.MessageAttachment'
+        
+        Add-ObjectDetail -InputObject $Attachment -TypeName 'PSSlack.MessageAttachment' -Passthru $False
+
+        if($ExistingAttachment)
+        {
+            @($ExistingAttachment) + $Attachment
+        }
+        else
+        {
+            $Attachment
+        }
     }
 }

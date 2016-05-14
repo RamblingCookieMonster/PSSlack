@@ -62,6 +62,94 @@
 
         See attachments spec https://api.slack.com/docs/attachments
 
+    .EXAMPLE
+        # This is a simple example illustrating some common options
+        # when constructing a message attachment
+        # giving you a richer message 
+        $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+        
+        New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+                                   -Title 'The System Is Down' `
+                                   -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                   -Text 'Please Do The Needful' `
+                                   -Pretext 'Everything is broken' `
+                                   -AuthorName 'SCOM Bot' `
+                                   -AuthorIcon 'http://ramblingcookiemonster.github.io/images/tools/wrench.png' `
+                                   -Fallback 'Your client is bad' |
+            New-SlackMessage -Channel '@wframe' `
+                             -IconEmoji :bomb: |
+            Send-SlackMessage -Token $Token
+        
+        # Create a message attachment with details about an alert
+        # Attach this to a slack message sending to the devnull channel
+        # Send the newly created message using a token
+
+    .EXAMPLE
+        # This example demonstrates that you can chain new attachments
+        # together to form a multi-attachment message
+        
+        $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+        
+        New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+                                   -Title 'The System Is Down' `
+                                   -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                   -Text 'Everybody panic!' `
+                                   -Pretext 'Everything is broken' `
+                                   -Fallback 'Your client is bad' |
+            New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+                                       -Title 'The Other System Is Down' `
+                                       -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                       -Text 'Please Do The Needful' `
+                                       -Fallback 'Your client is bad' |
+            New-SlackMessage -Channel '@wframe' `
+                             -IconEmoji :bomb: `
+                             -AsUser `
+                             -Username 'SCOM Bot' |
+            Send-SlackMessage -Token $Token
+        
+        # Create an attachment, create another attachment,
+        # add these to a message,
+        # and send with a token
+
+    .EXAMPLE
+
+        # This example illustrates a pattern where you might
+        # want to send output from a script; you might
+        # include errors, successful items, or other output
+        
+        # Pretend we're in a script, and caught an exception of some sort
+        $Fail = [pscustomobject]@{
+            samaccountname = 'bob'
+            operation = 'Remove privileges'
+            status = "An error message"
+            timestamp = (Get-Date).ToString()
+        }
+        
+        # Create an array from the properties in our fail object
+        $Fields = @()
+        foreach($Prop in $Fail.psobject.Properties.Name)
+        {
+            $Fields += @{
+                title = $Prop
+                value = $Fail.$Prop
+                short = $true
+            }
+        }
+        
+        $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+        
+        # Construct and send the message!
+        New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+                                   -Title 'Failed to process account' `
+                                   -Fields $Fields `
+                                   -Fallback 'Your client is bad' |
+            New-SlackMessage -Channel 'devnull' |
+            Send-SlackMessage -Uri $uri
+        
+        # We build up a pretend error object, and send each property to a 'Fields' array
+        # Creates an attachment with the fields from our error
+        # Creates a message fromthat attachment and sents it with a uri
+
     .FUNCTIONALITY
         Slack
     #>
