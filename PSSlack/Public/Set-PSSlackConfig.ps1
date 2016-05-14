@@ -4,9 +4,14 @@
         Set PSSlack module configuration.
 
     .DESCRIPTION
-        Set PSSlack module configuration, and live $PSStash global variable.
+        Set PSSlack module configuration, and $PSSlack module variable.
 
-        This data is used as the default for most commands.
+        This data is used as the default Token and Uri for most commands.
+
+        If a command takes either a token or a uri, tokens take precedence.
+
+        WARNING: Use this to store the token or uri on a filesystem at your own risk.
+                 These are sensitive data that should be encrypted where appropriate.
 
     .PARAMETER Token
         Specify a Token to use
