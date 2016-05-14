@@ -50,7 +50,9 @@
         Use false to disable unfurling of media content.
 
     .PARAMETER Attachments
-        Structured message attachments.  Provide one or more hash tables.
+        Optional rich structured message attachments.
+
+        Provide one or more hash tables created using New-SlackMessageAttachment
 
         See attachments spec https://api.slack.com/docs/attachments
 
@@ -80,6 +82,7 @@
         [Parameter(Mandatory=$true,
                    ValueFromPipeline = $true,
                    Position=1)]
+        [PSTypeName('PSSlack.MessageAttachment')]
         [System.Collections.Hashtable[]]
         $Attachments
     )
@@ -101,7 +104,8 @@
             'iconurl'     { $body.icon_url     = $iconurl}
             'attachments' { $body.attachments   = @($Attachments)}
         }
-        $body
+        
+        Add-ObjectDetail -InputObject $body -TypeName PSSlack.Message
 
         #$json = $Notification | ConvertTo-Json -Depth 4
         #$json = [regex]::replace($json,'\\u[a-fA-F0-9]{4}',{[char]::ConvertFromUtf32(($args[0].Value -replace '\\u','0x'))})

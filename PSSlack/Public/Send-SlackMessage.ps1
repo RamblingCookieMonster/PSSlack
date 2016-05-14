@@ -1,31 +1,107 @@
 ﻿function Send-SlackMessage {
+    <#
+    .SYNOPSIS
+        Send a Slack message
+
+    .DESCRIPTION
+        Send a Slack message
+
+        You can use the parameters here to build the message, or
+        provide a SlackMessage created with New-SlackMessage
+
+    .PARAMETER SlackMessage
+        A SlackMessage created by New-SlackMessage
+
+    .PARAMETER Channel
+        Channel, private group, or IM channel to send message to. Can be an encoded ID, or a name.
+
+    .PARAMETER Text
+        Text of the message to send
+
+        See formatting spec for more information.  https://api.slack.com/docs/formatting
+
+    .PARAMETER Username
+        Set your bot's user name. Must be used in conjunction with as_user set to false, otherwise ignored
+
+        See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
+
+    .PARAMETER IconUrl
+        URL to an image to use as the icon for this message. Must be used in conjunction with as_user set to false, otherwise ignored.
+
+        See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
+
+    .PARAMETER AsUser
+        Use true to post the message as the authed user, instead of as a bot. Defaults to false.
+        
+        See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
+
+    .PARAMETER LinkNames
+        Find and link channel names and usernames.
+
+    .PARAMETER Parse
+        Change how messages are treated. Defaults to none
+
+        If set to full, channels like #general and usernames like @bob will be linkified.
+
+        More details here: https://api.slack.com/docs/formatting#linking_to_channels_and_users
+
+    .PARAMETER UnfurlLinks
+        Use true to enable unfurling of primarily text-based content.
+
+    .PARAMETER UnfurlMedia	
+        Use false to disable unfurling of media content.
+
+    .PARAMETER Attachments
+        Optional rich structured message attachments.
+        
+        Provide one or more hash tables created using New-SlackMessageAttachment
+
+        See attachments spec https://api.slack.com/docs/attachments
+
+    .FUNCTIONALITY
+        Slack
+    #>
+
     [cmdletbinding(DefaultParameterSetName = 'Param')]
     param (
         [string]$Token = $Script:PSSlack.Token,
         [string]$Uri,
+
+        [PSTypeName('PSSlack.Message')]
         [parameter(ParameterSetName = 'SlackMessage')]
         $SlackMessage,
         $Channel,
-        [parameter(ParameterSetName = 'Param')]
+
+        [parameter(ParameterSetName = 'Param',
+                   Position = 1)]
         $Text,
+
         [parameter(ParameterSetName = 'Param')]
         $Username, 
+
         [parameter(ParameterSetName = 'Param')]
         $IconUrl, 
+
         [parameter(ParameterSetName = 'Param')]
         [switch]$AsUser,
+
         [parameter(ParameterSetName = 'Param')]
         [switch]$LinkNames,
+
         [parameter(ParameterSetName = 'Param')]
         [validateset('full','none')]
         [string]$Parse = 'none',
+
         [parameter(ParameterSetName = 'Param')]
         [validateset($True, $False)]
         [bool]$UnfurlLinks,
+
         [parameter(ParameterSetName = 'Param')]
         [validateset($True, $False)]
         [bool]$UnfurlMedia,
-        [object[]]$Attachments
+
+        [PSTypeName('PSSlack.MessageAttachment')]
+        [System.Collections.Hashtable[]]$Attachments
     )
     end {
 

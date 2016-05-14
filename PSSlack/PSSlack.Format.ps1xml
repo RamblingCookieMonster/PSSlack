@@ -4,7 +4,7 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
-                <TypeName>PSSlack.Message</TypeName>
+                <TypeName>PSSlack.SearchResult</TypeName>
             </ViewSelectedBy>
             <TableControl>
                 <TableHeaders>

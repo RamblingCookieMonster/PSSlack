@@ -10,7 +10,7 @@ Function Parse-SlackMessage {
 
     foreach($Message in $InputObject.messages.matches)
     {
-        Add-ObjectDetail -TypeName PSSlack.Message -InputObject $([pscustomobject]@{
+        Add-ObjectDetail -TypeName PSSlack.SearchResult -InputObject $([pscustomobject]@{
             Username = $Message.username
             Channel = $Message.channel.name
             Text = $Message.text
