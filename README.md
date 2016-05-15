@@ -3,7 +3,7 @@ PSSlack
 
 This is a quick and dirty module to interact with the Slack API.
 
-This is a work in progress; it's not fully featured or tested, and there may be breaking changes.
+This is a work in progress; it's not fully featured or tested, and there may be breaking changes.  Silly blog post pending.
 
 Pull requests and other contributions would be welcome!
 
@@ -14,9 +14,6 @@ Pull requests and other contributions would be welcome!
     # Download the repository
     # Unblock the zip
     # Extract the PSSlack folder to a module path (e.g. $env:USERPROFILE\Documents\WindowsPowerShell\Modules\)
-
-    #Simple alternative, if you have PowerShell 5, or the PowerShellGet module:
-        Install-Module PSSlack
 
 # Import the module.
     Import-Module PSSlack    #Alternatively, Import-Module \\Path\To\PSSlack
@@ -42,13 +39,39 @@ $Uri = "Some incoming webhook uri from Slack"
 
 Send-SlackMessage -Uri $Uri `
                   -Channel '@wframe' `
-                  -Parse full
+                  -Parse full `
                   -Text 'Hello @wframe, join me in #devnull!'
 
 # Send a message to @wframe (not a channel), parsing the text to linkify usernames and channels
 ```
 
-![Simple Send-SlackMessage](/Media/SimpleMessage.png)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Simple Send-SlackMessage](/Media/SimpleMessage.png)
+
+### Search for a Slack Message
+
+```powershell
+# Search for a message containing PowerShell, sorting results by timestamp
+
+Find-SlackMessage -Token $Token `
+                  -Query 'PowerShell' `
+                  -SortBy timestamp
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Find Message](/Media/FindMessage.png)
+
+```powershell
+# Search for a message containing PowerShell
+# Results are sorted by best match by default
+# Notice the extra properties and previous/next messages
+
+Find-SlackMessage -Token $Token `
+                  -Query 'PowerShell' |
+    Select-Object -Property *
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Find Message Select All](/Media/FindMessageSelect.png)
+
+You could use this simply to search Slack from the CLI, or in an automated solution that might avoid posting if certain content is already found in Slack.
 
 ### Send a Richer Slack Message
 
@@ -72,7 +95,7 @@ New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
     Send-SlackMessage -Token $Token
 ```
 
-![Rich messages](/Media/RichMessage.png)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Rich messages](/Media/RichMessage.png)
 
 Notice that the title is clickable.  You might link to...
 
@@ -108,7 +131,7 @@ New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
     Send-SlackMessage -Token $Token
 ```
 
-![Multiple Attachments](/Media/MultiAttachments.png)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Multiple Attachments](/Media/MultiAttachments.png)
 
 Notice that we can chain multiple New-SlackMessageAttachments together.
 
@@ -153,9 +176,9 @@ New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
 # Creates a message fromthat attachment and sents it with a uri
 ```
 
-![Fields](/Media/Fields.png)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Fields](/Media/Fields.png)
 
-## Notes
+# Notes
 
 There are a good number of Slack functions out there, including jgigler's [PowerShell.Slack](https://github.com/jgigler/Powershell.Slack) and Steven Murawski's [Slack](https://github.com/smurawski/Slack).  We borrowed some ideas and code from these - thank you!
 
