@@ -13,14 +13,14 @@
 
         Messages are searched primarily inside the message text themselves,
             with a lower priority on the messages immediately before and after.
-        
+
         If more than one search term is provided, user and channel are also matched at a lower priority.
-        
+
         To specifically search within a channel, group, or DM, add
             in:channel_name,
             in:group_name, or
             in:username.
-        
+
         To search for messages from a specific speaker, add
             from:username or
             from:botname.
@@ -70,7 +70,7 @@
     end
     {
         Write-Verbose "$($PSBoundParameters | Out-String)"
-        
+
         #Initial args
         $body = @{
             query = $Query
@@ -104,7 +104,7 @@
                     $Page++
                     $Params.Body.page = $Page
                 }
-                
+
                 if($Raw)
                 {
                     $response

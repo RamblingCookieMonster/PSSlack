@@ -1,61 +1,162 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/xyl9iyopvbucvpbi/branch/master?svg=true)](https://ci.appveyor.com/project/RamblingCookieMonster/psstackexchange/branch/master)
-
 PSSlack
 =============
 
-This is not fully featured or tested, but pull requests would be welcome!
+This is a quick and dirty module to interact with the Slack API.
 
-#Instructions
+This is a work in progress; it's not fully featured or tested, and there may be breaking changes.
+
+Pull requests and other contributions would be welcome!
+
+# Instructions
 
 ```powershell
 # One time setup
     # Download the repository
     # Unblock the zip
-    # Extract the PSStackExchange folder to a module path (e.g. $env:USERPROFILE\Documents\WindowsPowerShell\Modules\)
+    # Extract the PSSlack folder to a module path (e.g. $env:USERPROFILE\Documents\WindowsPowerShell\Modules\)
 
     #Simple alternative, if you have PowerShell 5, or the PowerShellGet module:
-        Install-Module PSStackExchange
+        Install-Module PSSlack
 
 # Import the module.
-    Import-Module PSStackExchange    #Alternatively, Import-Module \\Path\To\PSStackExchange
+    Import-Module PSSlack    #Alternatively, Import-Module \\Path\To\PSSlack
 
 # Get commands in the module
-    Get-Command -Module PSStackExchange
+    Get-Command -Module PSSlack
 
 # Get help
-    Get-Help Get-SEObject -Full
-    Get-Help about_PSStackExchange
+    Get-Help Send-SlackMessage -Full
+    Get-Help about_PSSlack
 ```
 
-#Examples
+# Examples
 
-### Find Stack Exchange Sites and Urls
+### Send a Simple Slack Message
 
-```PowerShell
-# Find Stack Exchange sites and urls
-    Get-SEObject -Object Sites |
-        Sort -Property api_site_parameter |
-        Select -Property api_site_parameter, site_url
+```powershell
+# This example shows a crudely crafted message without any attachments,
+# using parameters from Send-SlackMessage to construct the message.
+
+#Previously set up Uri from https://<YOUR TEAM>.slack.com/apps/A0F7XDUAZ
+$Uri = "Some incoming webhook uri from Slack"
+
+Send-SlackMessage -Uri $Uri `
+                  -Channel '@wframe' `
+                  -Parse full
+                  -Text 'Hello @wframe, join me in #devnull!'
+
+# Send a message to @wframe (not a channel), parsing the text to linkify usernames and channels
 ```
 
-![Get Sites](/Media/Get-SEObject.png)
+![Simple Send-SlackMessage](/Media/SimpleMessage.png)
 
-### Search Stack Exchange Questions
+### Send a Richer Slack Message
 
-```PowerShell
-# Search questions on stack overflow, tagged PowerShell, with System.DBNull in the title
-    Search-SEQuestion -Title System.DBNull -Tag PowerShell -Site StackOverflow
+```powershell
+# This is a simple example illustrating some common options
+# when constructing a message attachment
+# giving you a richer message
 
-# Search questions on ServerFault
-#     Posted by User with ID 105072
-#     With PowerShell in the Title
-#     Without the tag windows-server-2008-r2
-    Search-SEQuestion -User 105072 `
-                      -Site ServerFault `
-                      -ExcludeTag 'windows-server-2008-r2' `
-                      -Title PowerShell
+$Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+
+New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+                           -Title 'The System Is Down' `
+                           -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                           -Text 'Please Do The Needful' `
+                           -Pretext 'Everything is broken' `
+                           -AuthorName 'SCOM Bot' `
+                           -AuthorIcon 'http://ramblingcookiemonster.github.io/images/tools/wrench.png' `
+                           -Fallback 'Your client is bad' |
+    New-SlackMessage -Channel '@wframe' `
+                     -IconEmoji :bomb: |
+    Send-SlackMessage -Token $Token
 ```
 
-![Search Questions](/Media/Search-SEQuestion.png)
+![Rich messages](/Media/RichMessage.png)
 
+Notice that the title is clickable.  You might link to...
 
+* The alert in question
+* A logging solution query
+* A dashboard
+* Some other contextual link
+* Strongbad
+
+### Send Multiple Slack Attachments
+
+```powershell
+# This example demonstrates that you can chain new attachments
+# together to form a multi-attachment message
+
+$Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+
+New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+                           -Title 'The System Is Down' `
+                           -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                           -Text 'Everybody panic!' `
+                           -Pretext 'Everything is broken' `
+                           -Fallback 'Your client is bad' |
+    New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+                               -Title 'The Other System Is Down' `
+                               -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                               -Text 'Please Do The Needful' `
+                               -Fallback 'Your client is bad' |
+    New-SlackMessage -Channel '@wframe' `
+                     -IconEmoji :bomb: `
+                     -AsUser `
+                     -Username 'SCOM Bot' |
+    Send-SlackMessage -Token $Token
+```
+
+![Multiple Attachments](/Media/MultiAttachments.png)
+
+Notice that we can chain multiple New-SlackMessageAttachments together.
+
+### Send a Table of Key Value Pairs
+
+```powershell
+# This example illustrates a pattern where you might
+# want to send output from a script; you might
+# include errors, successful items, or other output
+
+# Pretend we're in a script, and caught an exception of some sort
+$Fail = [pscustomobject]@{
+    samaccountname = 'bob'
+    operation = 'Remove privileges'
+    status = "An error message"
+    timestamp = (Get-Date).ToString()
+}
+
+# Create an array from the properties in our fail object
+$Fields = @()
+foreach($Prop in $Fail.psobject.Properties.Name)
+{
+    $Fields += @{
+        title = $Prop
+        value = $Fail.$Prop
+        short = $true
+    }
+}
+
+$Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
+
+# Construct and send the message!
+New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+                           -Title 'Failed to process account' `
+                           -Fields $Fields `
+                           -Fallback 'Your client is bad' |
+    New-SlackMessage -Channel 'devnull' |
+    Send-SlackMessage -Uri $uri
+
+# We build up a pretend error object, and send each property to a 'Fields' array
+# Creates an attachment with the fields from our error
+# Creates a message fromthat attachment and sents it with a uri
+```
+
+![Fields](/Media/Fields.png)
+
+## Notes
+
+There are a good number of Slack functions out there, including jgigler's [PowerShell.Slack](https://github.com/jgigler/Powershell.Slack) and Steven Murawski's [Slack](https://github.com/smurawski/Slack).  We borrowed some ideas and code from these - thank you!
+
+If you want to go beyond interacting with the Slack API, you might consider using a bot.  Matt Hodgkins has a [fantastic post](https://hodgkins.io/chatops-on-windows-with-hubot-and-powershell) on this topic.

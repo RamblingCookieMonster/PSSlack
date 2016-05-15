@@ -18,12 +18,12 @@ function New-SlackMessageAttachment
 
     .PARAMETER Severity
         This value is used to color the border along the left side of the message attachment. This parameter cannot be used in conjunction with the "Color" parameter.
-    
+
         Only good, bad and warning are accepted by this parameter.
 
     .PARAMETER Color
         This value is used to color the border along the left side of the message attachment.
-    
+
         There are two options for this value:
 
             Use Hex Web Colors to define the color. e.g. -Color #FF0000
@@ -39,12 +39,12 @@ function New-SlackMessageAttachment
 
     .PARAMETER AuthorLink
         A valid URL that will hyperlink the AuthorName text mentioned above.
-    
+
         Will only work if AuthorName is present.
 
     .PARAMETER AuthorIcon
         A valid URL that displays a small 16x16px image to the left of the AuthorName text.
-    
+
         Will only work if AuthorName is present.
 
     .PARAMETER Title
@@ -65,7 +65,7 @@ function New-SlackMessageAttachment
 
     .PARAMETER Fields
         One or more hashtables contained provided here will be displayed in a table inside the message attachment.
-    
+
         Each hashtable provided must contain a "title" key and a "value" key.
         Optionally it may also contain "Short" which is a boolean parameter.
 
@@ -76,16 +76,16 @@ function New-SlackMessageAttachment
 
     .PARAMETER ExistingAttachment
         One or more attachments to add this attachment to.
-        
+
         Allows you to chain calls to this function:
             New-SlackMessageAttachment ... | New-SlackMessageAttachment ...
 
     .EXAMPLE
         # This is a simple example illustrating some common options
         # when constructing a message attachment
-        # giving you a richer message 
+        # giving you a richer message
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
@@ -97,7 +97,7 @@ function New-SlackMessageAttachment
             New-SlackMessage -Channel '@wframe' `
                              -IconEmoji :bomb: |
             Send-SlackMessage -Token $Token
-        
+
         # Create a message attachment with details about an alert
         # Attach this to a slack message sending to the devnull channel
         # Send the newly created message using a token
@@ -105,9 +105,9 @@ function New-SlackMessageAttachment
     .EXAMPLE
         # This example demonstrates that you can chain new attachments
         # together to form a multi-attachment message
-        
+
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
@@ -124,7 +124,7 @@ function New-SlackMessageAttachment
                              -AsUser `
                              -Username 'SCOM Bot' |
             Send-SlackMessage -Token $Token
-        
+
         # Create an attachment, create another attachment,
         # add these to a message,
         # and send with a token
@@ -134,7 +134,7 @@ function New-SlackMessageAttachment
         # This example illustrates a pattern where you might
         # want to send output from a script; you might
         # include errors, successful items, or other output
-        
+
         # Pretend we're in a script, and caught an exception of some sort
         $Fail = [pscustomobject]@{
             samaccountname = 'bob'
@@ -142,7 +142,7 @@ function New-SlackMessageAttachment
             status = "An error message"
             timestamp = (Get-Date).ToString()
         }
-        
+
         # Create an array from the properties in our fail object
         $Fields = @()
         foreach($Prop in $Fail.psobject.Properties.Name)
@@ -153,9 +153,9 @@ function New-SlackMessageAttachment
                 short = $true
             }
         }
-        
+
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         # Construct and send the message!
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
                                    -Title 'Failed to process account' `
@@ -163,16 +163,19 @@ function New-SlackMessageAttachment
                                    -Fallback 'Your client is bad' |
             New-SlackMessage -Channel 'devnull' |
             Send-SlackMessage -Uri $uri
-        
+
         # We build up a pretend error object, and send each property to a 'Fields' array
         # Creates an attachment with the fields from our error
         # Creates a message fromthat attachment and sents it with a uri
 
     .LINK
-    https://api.slack.com/docs/attachments
+        https://github.com/RamblingCookieMonster/PSSlack
 
     .LINK
-    https://api.slack.com/methods/chat.postMessage
+        https://api.slack.com/docs/attachments
+
+    .LINK
+        https://api.slack.com/methods/chat.postMessage
     #>
     [CmdletBinding(DefaultParameterSetName='Severity')]
     [OutputType([System.Collections.Hashtable])]
@@ -185,14 +188,14 @@ function New-SlackMessageAttachment
         [Parameter(Mandatory=$true,
                    Position=0)]
         [String]$Fallback,
-        
+
         [Parameter(Mandatory=$false,
                    ParameterSetName='Severity')]
         [ValidateSet("good",
-                     "warning", 
+                     "warning",
                      "danger")]
         [String]$Severity,
-        
+
         [Parameter(Mandatory=$false,
                    ParameterSetName='Color')]
         [Alias("Colour")]
@@ -255,7 +258,7 @@ function New-SlackMessageAttachment
             'ThumbUrl' {$Attachment.thumb_url = $ThumbURL}
             'MarkDownFields' {$Attachment.mrkdwn_in = @($MarkDownFields)}
         }
-        
+
         Add-ObjectDetail -InputObject $Attachment -TypeName 'PSSlack.MessageAttachment' -Passthru $False
 
         if($ExistingAttachment)

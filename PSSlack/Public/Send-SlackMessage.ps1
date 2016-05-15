@@ -9,6 +9,20 @@
         You can use the parameters here to build the message, or
         provide a SlackMessage created with New-SlackMessage
 
+    .PARAMETER Token
+        Token to use for the Slack API
+
+        Default value is the value set by Set-PSSlackConfig
+
+        This takes precedence over Uri
+
+    .PARAMETER Uri
+        Uri to use for an incoming webhook
+
+        Default value is the value set by Set-PSSlackConfig
+
+        If Token is set, this is ignored.
+
     .PARAMETER SlackMessage
         A SlackMessage created by New-SlackMessage
 
@@ -32,7 +46,7 @@
 
     .PARAMETER AsUser
         Use true to post the message as the authed user, instead of as a bot. Defaults to false.
-        
+
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
     .PARAMETER LinkNames
@@ -48,12 +62,12 @@
     .PARAMETER UnfurlLinks
         Use true to enable unfurling of primarily text-based content.
 
-    .PARAMETER UnfurlMedia	
+    .PARAMETER UnfurlMedia
         Use false to disable unfurling of media content.
 
     .PARAMETER Attachments
         Optional rich structured message attachments.
-        
+
         Provide one or more hash tables created using New-SlackMessageAttachment
 
         See attachments spec https://api.slack.com/docs/attachments
@@ -62,19 +76,22 @@
         # This example shows a crudely crafted message without any attachments,
         # using parameters from Send-SlackMessage to construct the message.
 
-        #Previously set up Uri from https://fasrc.slack.com/apps/A0F7XDUAZ
+        #Previously set up Uri from https://<YOUR TEAM>.slack.com/apps/A0F7XDUAZ
         $Uri = "Some incoming webhook uri from Slack"
 
-        Send-SlackMessage -Uri $Uri -Channel '@wframe' -parse full -Text 'Hello @wframe, join me in #devnull!'
+        Send-SlackMessage -Uri $Uri `
+                          -Channel '@wframe' `
+                          -Parse full `
+                          -Text 'Hello @wframe, join me in #devnull!'
 
         # Send a message to @wframe (not a channel), parsing the text to linkify usernames and channels
 
     .EXAMPLE
         # This is a simple example illustrating some common options
         # when constructing a message attachment
-        # giving you a richer message 
+        # giving you a richer message
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
@@ -86,7 +103,7 @@
             New-SlackMessage -Channel '@wframe' `
                              -IconEmoji :bomb: |
             Send-SlackMessage -Token $Token
-        
+
         # Create a message attachment with details about an alert
         # Attach this to a slack message sending to the devnull channel
         # Send the newly created message using a token
@@ -94,9 +111,9 @@
     .EXAMPLE
         # This example demonstrates that you can chain new attachments
         # together to form a multi-attachment message
-        
+
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
@@ -113,7 +130,7 @@
                              -AsUser `
                              -Username 'SCOM Bot' |
             Send-SlackMessage -Token $Token
-        
+
         # Create an attachment, create another attachment,
         # add these to a message,
         # and send with a token
@@ -123,7 +140,7 @@
         # This example illustrates a pattern where you might
         # want to send output from a script; you might
         # include errors, successful items, or other output
-        
+
         # Pretend we're in a script, and caught an exception of some sort
         $Fail = [pscustomobject]@{
             samaccountname = 'bob'
@@ -131,7 +148,7 @@
             status = "An error message"
             timestamp = (Get-Date).ToString()
         }
-        
+
         # Create an array from the properties in our fail object
         $Fields = @()
         foreach($Prop in $Fail.psobject.Properties.Name)
@@ -142,9 +159,9 @@
                 short = $true
             }
         }
-        
+
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         # Construct and send the message!
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
                                    -Title 'Failed to process account' `
@@ -152,10 +169,44 @@
                                    -Fallback 'Your client is bad' |
             New-SlackMessage -Channel 'devnull' |
             Send-SlackMessage -Uri $uri
-        
+
         # We build up a pretend error object, and send each property to a 'Fields' array
         # Creates an attachment with the fields from our error
         # Creates a message fromthat attachment and sents it with a uri
+
+    .NOTES
+
+    ON AUTHORIZATION:
+
+        We don't get fancy with ParameterSets.  Here's a breakdown of how we pick Uri or Token:
+
+            Parameters are used before Set-PSSlackConfig settings
+            Tokens are used before Uri
+
+            Examples:
+                Uri parameter specified, token exists in Set-PSSlackConfig: Uri is used
+                Uri and token exist in Set-PSSlackConfig: token is used
+                Token and Uri parameters are specified: Token is used
+
+    ON OUTPUT:
+
+        The Slack API and Incoming Webhook alter the output Send-SlackMessage will provide.
+
+        If you use a Uri for an Incoming Webhook, Slack will return a string:
+           "ok" if the call succeeded
+           An error string if something went wrong
+
+        If you use a token, we get a bit more detail back:
+            ok      : True
+            channel : D0ST7FE6Q
+            ts      : 1463254594.000027
+            message : @{text=; username=Slack API Tester; icons=; attachments=System.Object[]; type=message;...
+            link    : ArchiveUri.From.Set-PSSlackConfig/D0ST7FE6Q/p1463254594000027
+
+        If you use a token and things don't go so well, the OK field will not be true:
+            ok      error
+            --      -----
+            False   channel_not_found
 
     .FUNCTIONALITY
         Slack
@@ -180,11 +231,11 @@
 
         [parameter(ParameterSetName = 'Param',
                    ValueFromPipelineByPropertyName = $True)]
-        $Username, 
+        $Username,
 
         [parameter(ParameterSetName = 'Param',
                    ValueFromPipelineByPropertyName = $True)]
-        $IconUrl, 
+        $IconUrl,
 
         [parameter(ParameterSetName = 'Param',
                    ValueFromPipelineByPropertyName = $True)]
@@ -224,7 +275,7 @@
         {
 
             $body = @{ channel = $channel }
-            
+
             switch ($psboundparameters.keys) {
                 'text'        {$body.text     = $text}
                 'username'    {$body.username = $username}
@@ -252,21 +303,21 @@
         {
             if($Token -or ($Script:PSSlack.Token -and -not $Uri))
             {
-            
+
                 if($Message.attachments)
                 {
                     $Message.attachments = ConvertTo-Json -InputObject @($Message.attachments) -Depth 4 -Compress
                 }
-                
+
                 Write-Verbose "Send-SlackApi -Body $($Message | Format-List | Out-String)"
                 $response = Send-SlackApi -Method chat.postMessage -Body $Message -Token $Token
-            
+
                 if ($response.ok)
                 {
                     $link = "$($Script:PSSlack.ArchiveUri)/$($response.channel)/p$($response.ts -replace '\.')"
                     $response | Add-Member -MemberType NoteProperty -Name link -Value $link
                 }
-            
+
                 $response
             }
             Elseif($Uri -or $Script:PSSlack.Uri)

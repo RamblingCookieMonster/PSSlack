@@ -14,11 +14,12 @@ Function Parse-SlackMessage {
             Username = $Message.username
             Channel = $Message.channel.name
             Text = $Message.text
+            Attachments = $Message.Attachments
             Permalink = $Message.permalink
-            previous = Extract-Previous $Message.Previous
-            previous_2 = Extract-Previous $Message.Previous_2
-            next = Extract-Previous $Message.Next
-            next_2 = Extract-Previous $Message.Next_2
+            Previous = Extract-Previous $Message.Previous
+            Previous_2 = Extract-Previous $Message.Previous_2
+            Next = Extract-Previous $Message.Next
+            Next_2 = Extract-Previous $Message.Next_2
         })
     }
 

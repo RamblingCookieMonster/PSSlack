@@ -31,12 +31,12 @@
     .PARAMETER IconEmoji
         Emoji to use as the icon for this message.
         Overrides icon_url.
-        
+
         Must be used in conjunction with as_user set to false, otherwise ignored
 
     .PARAMETER AsUser
         Use true to post the message as the authed user, instead of as a bot. Defaults to false.
-        
+
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
     .PARAMETER LinkNames
@@ -52,7 +52,7 @@
     .PARAMETER UnfurlLinks
         Use true to enable unfurling of primarily text-based content.
 
-    .PARAMETER UnfurlMedia	
+    .PARAMETER UnfurlMedia
         Use false to disable unfurling of media content.
 
     .PARAMETER Attachments
@@ -65,9 +65,9 @@
     .EXAMPLE
         # This is a simple example illustrating some common options
         # when constructing a message attachment
-        # giving you a richer message 
+        # giving you a richer message
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
@@ -79,7 +79,7 @@
             New-SlackMessage -Channel '@wframe' `
                              -IconEmoji :bomb: |
             Send-SlackMessage -Token $Token
-        
+
         # Create a message attachment with details about an alert
         # Attach this to a slack message sending to the devnull channel
         # Send the newly created message using a token
@@ -87,9 +87,9 @@
     .EXAMPLE
         # This example demonstrates that you can chain new attachments
         # together to form a multi-attachment message
-        
+
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
@@ -106,7 +106,7 @@
                              -AsUser `
                              -Username 'SCOM Bot' |
             Send-SlackMessage -Token $Token
-        
+
         # Create an attachment, create another attachment,
         # add these to a message,
         # and send with a token
@@ -116,7 +116,7 @@
         # This example illustrates a pattern where you might
         # want to send output from a script; you might
         # include errors, successful items, or other output
-        
+
         # Pretend we're in a script, and caught an exception of some sort
         $Fail = [pscustomobject]@{
             samaccountname = 'bob'
@@ -124,7 +124,7 @@
             status = "An error message"
             timestamp = (Get-Date).ToString()
         }
-        
+
         # Create an array from the properties in our fail object
         $Fields = @()
         foreach($Prop in $Fail.psobject.Properties.Name)
@@ -135,9 +135,9 @@
                 short = $true
             }
         }
-        
+
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
-        
+
         # Construct and send the message!
         New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
                                    -Title 'Failed to process account' `
@@ -145,7 +145,7 @@
                                    -Fallback 'Your client is bad' |
             New-SlackMessage -Channel 'devnull' |
             Send-SlackMessage -Uri $uri
-        
+
         # We build up a pretend error object, and send each property to a 'Fields' array
         # Creates an attachment with the fields from our error
         # Creates a message fromthat attachment and sents it with a uri
@@ -154,12 +154,12 @@
         Slack
     #>
     [CmdletBinding()]
-    [OutputType([System.Collections.Hashtable])]
+    [OutputType([System.Collections.Hashtable],[String])]
     Param
-    (        
+    (
         [string]$Channel,
         [string]$Text,
-        [string]$Username, 
+        [string]$Username,
         [string]$IconUrl,
         [string]$IconEmoji,
         [switch]$AsUser,
@@ -170,10 +170,10 @@
 
         [validateset($True, $False)]
         [bool]$UnfurlLinks,
-        
+
         [validateset($True, $False)]
         [bool]$UnfurlMedia,
-        
+
         [Parameter(Mandatory=$true,
                    ValueFromPipeline = $true,
                    Position=1)]
@@ -210,7 +210,7 @@
             'iconurl'     { $body.icon_url     = $iconurl}
             'attachments' { $body.attachments   = @($AllAttachments)}
         }
-        
+
         Add-ObjectDetail -InputObject $body -TypeName PSSlack.Message
     }
 }
