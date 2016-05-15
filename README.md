@@ -26,6 +26,14 @@ Pull requests and other contributions would be welcome!
     Get-Help about_PSSlack
 ```
 
+### Prerequisites
+
+* PowerShell 3 or later
+* A valid token or incoming webhook uri from Slack.
+  * [Grab a test token](https://api.slack.com/docs/oauth-test-tokens)
+  * [Register a Slack app, grab a token](https://api.slack.com/docs/oauth) - we'll try wrapping this in the module later
+  * [Add an incoming webhook to your team, grab the Uri](https://my.slack.com/services/new/incoming-webhook/)
+
 # Examples
 
 ### Send a Simple Slack Message
