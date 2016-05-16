@@ -10,7 +10,8 @@ Function Parse-SlackMessage {
 
     foreach($Message in $InputObject.messages.matches)
     {
-        Add-ObjectDetail -TypeName PSSlack.SearchResult -InputObject $([pscustomobject]@{
+        [pscustomobject]@{
+            PSTypeName = 'PSSlack.SearchResult'
             Username = $Message.username
             Channel = $Message.channel.name
             Text = $Message.text
@@ -21,7 +22,7 @@ Function Parse-SlackMessage {
             Previous_2 = Extract-Previous $Message.Previous_2
             Next = Extract-Previous $Message.Next
             Next_2 = Extract-Previous $Message.Next_2
-        })
+        }
     }
 
 
