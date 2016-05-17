@@ -22,4 +22,4 @@ build: false
 
 #Kick off the CI/CD pipeline
 test_script:
-  - ps: Invoke-Psake .\psake.ps1
+  - ps: import-module psake; Invoke-Psake .\psake.ps1
