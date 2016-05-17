@@ -31,6 +31,7 @@ Function Parse-SlackMessage {
                 Channel = $Message.channel.name
                 Text = $Message.text
                 Attachments = $Message.Attachments
+                Reactions = $Message.Reactions
                 File = $Message.File
                 Type = $Message.Type
                 SubType = $Message.subtype
@@ -55,6 +56,7 @@ Function Parse-SlackMessage {
                 Username = $Message.username
                 Text = $Message.text
                 Attachments = $Message.Attachments
+                Reactions = $Message.Reactions
                 File = $Message.File
                 Type = $Message.Type
                 SubType = $Message.subtype
