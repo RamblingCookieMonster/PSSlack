@@ -13,13 +13,8 @@ os: WMF 5
 skip_commits:
   message: /updated readme.*|update readme.*s/
 
-
-install:
-  - cinst pester -y
-  - cinst psake -y
-
 build: false
 
 #Kick off the CI/CD pipeline
 test_script:
-  - ps: import-module psake; Invoke-Psake .\psake.ps1
+  - ps: . .\build.ps1
