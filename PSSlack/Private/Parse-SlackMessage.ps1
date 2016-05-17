@@ -28,6 +28,7 @@ Function Parse-SlackMessage {
             [pscustomobject]@{
                 PSTypeName = $pstypename
                 Username = $Message.username
+                User = $Message.User
                 Channel = $Message.channel.name
                 Text = $Message.text
                 Attachments = $Message.Attachments
@@ -54,6 +55,7 @@ Function Parse-SlackMessage {
             [pscustomobject]@{
                 PSTypeName = $pstypename
                 Username = $Message.username
+                User = $Message.User
                 Text = $Message.text
                 Attachments = $Message.Attachments
                 Reactions = $Message.Reactions
