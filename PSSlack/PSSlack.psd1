@@ -84,13 +84,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+         Tags = @('Slack', 'Chat', 'Message', 'Messaging')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+         LicenseUri = 'https://github.com/RamblingCookieMonster/PSSlack/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+         ProjectUri = 'https://github.com/RamblingCookieMonster/PSSlack/'
 
         # A URL to an icon representing this module.
         # IconUri = ''
