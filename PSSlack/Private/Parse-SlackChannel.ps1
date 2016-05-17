@@ -3,7 +3,7 @@ Function Parse-SlackChannel {
     [cmdletbinding()]
     param( $InputObject )
 
-    foreach($Channel in $InputObject.channels)
+    foreach($Channel in $InputObject)
     {
         $TopicSet = $null
         $PurposeSet = $null

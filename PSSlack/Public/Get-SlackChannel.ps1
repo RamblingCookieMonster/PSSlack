@@ -16,7 +16,7 @@
         One or more channel names to return.  Defaults to all.  Accepts wildcards.
 
     .PARAMETER ExcludeArchived
-        Whether to exclude archived channels. 1 or 0. Defaults to 0 (return all channels, including archived channels)
+        Whether to exclude archived channels. Default is to include all.
 
     .PARAMETER Raw
         If specified, we provide raw output and do not parse any responses
@@ -28,34 +28,45 @@
     param (
         $Token = $Script:PSSlack.Token,
         [string[]]$Name,
-
-        [ValidateSet(0,1)]
-        [int]$ExcludeArchived = 0,
-
+        [switch]$ExcludeArchived,
         [switch]$Raw
-
     )
     end
     {
         Write-Verbose "$($PSBoundParameters | Out-String)"
 
-        $body = @{exclude_archived = $ExcludeArchived}
+        $body = @{}
+        if($ExcludeArchived)
+        {
+            $body.add('exclude_archived', 1)
+        }
         $params = @{
             Body = $body
             Token = $Token
             Method = 'channels.list'
         }
+        $RawChannels = Send-SlackApi @params
 
-        if($Name -and $Name -notmatch '\*')
+        $HasWildCard = $False
+        foreach($Item in $Name)
+        {
+            if($Item -match '\*')
+            {
+                $HasWildCard = $true
+                break
+            }
+        }
+
+        if($Name -and -not $HasWildCard)
         {       
             # torn between independent queries, or filtering channels.list
             # submit a PR if this isn't performant enough or doesn't make sense.
-            $Channels = Send-SlackApi @params |
+            $Channels = $RawChannels.channels |
                 Where {$Name -Contains $_.name}
         }
-        elseif ($Name -and $Name -match '\*')
+        elseif ($Name -and$HasWildCard)
         {
-            $AllChannels = Send-SlackApi @params
+            $AllChannels = $RawChannels.Channels
             
             # allow like operator on each channel requested in the param, avoid dupes
             $ChannelHash = [ordered]@{}
@@ -63,7 +74,7 @@
             {
                 foreach($Chan in $Name)
                 {
-                    if($SlackChannel.Name -like $Chan -and -not $ChannelHash.ContainsKey($SlackChannel.id))
+                    if($SlackChannel.Name -like $Chan -and -not $ChannelHash.Contains($SlackChannel.id))
                     {
                         $ChannelHash.Add($SlackChannel.Id, $SlackChannel)
                     }
@@ -73,12 +84,12 @@
         }
         else # nothing specified
         {
-            $Channels = Send-SlackApi @params
+            $Channels = $RawChannels.channels
         }
 
         if($Raw)
         {
-            $Channels
+            $RawChannels
         }
         else
         {
