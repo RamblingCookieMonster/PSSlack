@@ -24,6 +24,7 @@ Properties {
     $Timestamp = Get-date -uformat "%Y%m%d-%H%M%S"
     $PSVersion = $PSVersionTable.PSVersion.Major
     $TestFile = "TestResults_PS$PSVersion`_$TimeStamp.xml"
+    $lines = '----------------------------------------------------------------------'
 
     # Verbose output for non-master builds on appveyor
     # Handy for troubleshooting. Splat @Verbose against commands as needed
@@ -37,14 +38,17 @@ Properties {
 Task Default -Depends Deploy
 
 Task Init {
+    $lines
     Set-Location $ProjectRoot
 }
 
 Task Clean {
+    $lines
     Remove-Item "$ProjectRoot\Destination\" -ErrorAction SilentlyContinue -Force -Recurse
 }
 
 Task Test -Depends Clean {
+    $lines
     "`n`tSTATUS: Testing with PowerShell $PSVersion"
 
     # Gather test results. Store them in a variable and file
@@ -70,6 +74,7 @@ Task Test -Depends Clean {
 }
 
 Task Deploy -Depends Test {
+    $lines
 
     # Gate on master branch, and !deploy keyword anywhere in the commit
     if(
