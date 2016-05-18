@@ -85,7 +85,7 @@ Task Deploy -Depends Test {
         )
     )
     {
-        Invoke-PSDeploy -Path $ProjectRoot
+        Invoke-PSDeploy -Path $ProjectRoot -Force
     }
     else
     {
