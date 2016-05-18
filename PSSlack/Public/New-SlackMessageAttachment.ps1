@@ -162,7 +162,7 @@ function New-SlackMessageAttachment
                                    -Fields $Fields `
                                    -Fallback 'Your client is bad' |
             New-SlackMessage -Channel 'devnull' |
-            Send-SlackMessage -Uri $uri
+            Send-SlackMessage -Token $Token
 
         # We build up a pretend error object, and send each property to a 'Fields' array
         # Creates an attachment with the fields from our error
