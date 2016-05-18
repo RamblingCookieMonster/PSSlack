@@ -1,4 +1,5 @@
 ﻿# Generic module deployment.
+# This stuff should be moved to psake for a cleaner deployment view
 
 # ASSUMPTIONS:
 
@@ -23,7 +24,7 @@ if($ModuleToDeploy -and $ModuleToDeploy.Count -eq 1)
     Deploy Module {
         By PSGalleryModule {
             FromSource $Script:ModuleToDeploy
-            To Gallery
+            To PSGallery
             WithOptions @{
                 ApiKey = $ENV:NugetApiKey
             }
