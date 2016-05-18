@@ -12,9 +12,9 @@ Properties {
     # Find the build folder based on build system
         $ProjectRoot = switch ((Get-ChildItem ENV:).Name)
         {
-            'APPVEYOR_BUILD_FOLDER' { Get-Item -Path "ENV:$_"; break }
-            'CI_PROJECT_DIR'        { Get-Item -Path "ENV:$_"; break }
-            'WORKSPACE'             { Get-Item -Path "ENV:$_"; break } # Jenkins Jenkins... seems generic.
+            'APPVEYOR_BUILD_FOLDER' { (Get-Item -Path "ENV:$_").Value;; break }
+            'CI_PROJECT_DIR'        { (Get-Item -Path "ENV:$_").Value; break }
+            'WORKSPACE'             { (Get-Item -Path "ENV:$_").Value; break } # Jenkins Jenkins... seems generic.
         }
         if(-not $ProjectRoot)
         {
