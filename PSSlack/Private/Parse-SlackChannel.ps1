@@ -29,6 +29,7 @@ Function Parse-SlackChannel {
             Purpose = $Channel.Purpose.value
             PurposeSet = $PurposeSet
             MemberCount = $Channel.num_members
+            Raw = $Channel
         }
     }
 }

@@ -215,7 +215,7 @@
     [cmdletbinding(DefaultParameterSetName = 'SlackMessage')]
     param (
         [string]$Token = $Script:PSSlack.Token,
-        [string]$Uri,
+        [string]$Uri = $Script:PSSlack.Uri,
 
         [PSTypeName('PSSlack.Message')]
         [parameter(ParameterSetName = 'SlackMessage',
