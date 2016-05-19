@@ -25,29 +25,15 @@
     [OutputType([String])]
     [cmdletbinding()]
     param (
-        [Parameter(Mandatory)]
-		[ValidateNotNullOrEmpty()]
-		[string]$Method,
-		
-		[Parameter()]
-		[ValidateNotNullOrEmpty()]
-		[hashtable]$Body = @{ },
-	
-		[Parameter(Mandatory)]
-		[ValidateNotNullOrEmpty()]
-		[ValidateScript({
-			if (-not $Script:PSSlack.Token)
-			{
-				throw 'Please supply a Slack Api Token with Set-SlackApiToken.'
-			}
-			else
-			{
-				$true	
-			}
-		})]
-		[string]$Token = $Script:PSSlack.Token
+        $Method,
+        $Body = @{},
+        $Token = $Script:PSSlack.Token
     )
 
+    if ([string]::isnullorempty($token)){
+        throw "Please supply a Slack Api Token with Set-SlackApiToken."
+    }
+
     $Body.token = $Token
-    Invoke-RestMethod -Uri "https://slack.com/api/$Method" -body $Body
+    Invoke-RestMethod -Uri "https://slack.com/api/$method" -body $Body
 }
