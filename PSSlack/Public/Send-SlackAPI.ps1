@@ -1,4 +1,5 @@
-﻿function Send-SlackApi {
+function Send-SlackApi
+{
     <#
     .SYNOPSIS
         Send a message to the Slack API endpoint
@@ -25,15 +26,29 @@
     [OutputType([String])]
     [cmdletbinding()]
     param (
-        $Method,
-        $Body = @{},
-        $Token = $Script:PSSlack.Token
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Method,
+        
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [hashtable]$Body = @{ },
+        
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({
+            if (-not $_ -and -not $Script:PSSlack.Token)
+            {
+                throw 'Please supply a Slack Api Token with Set-SlackApiToken.'
+            }
+            else
+            {
+                $true
+            }
+        })]
+        [string]$Token = $Script:PSSlack.Token
     )
-
-    if ([string]::isnullorempty($token)){
-        throw "Please supply a Slack Api Token with Set-SlackApiToken."
-    }
-
+    
     $Body.token = $Token
-    Invoke-RestMethod -Uri "https://slack.com/api/$method" -body $Body
+    Invoke-RestMethod -Uri "https://slack.com/api/$Method" -body $Body
 }
