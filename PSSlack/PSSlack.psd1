@@ -4,7 +4,7 @@
 RootModule = 'PSSlack.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.2'
+ModuleVersion = '0.0.3'
 
 # ID used to uniquely identify this module
 GUID = 'fb0a1f73-e16c-4829-b2a7-4fc8d7bed545'
@@ -19,7 +19,7 @@ Author = 'RamblingCookieMonster'
 Copyright = '(c) 2016 RamblingCookieMonster. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'PowerShell module for the Slack Webhook API'
+Description = 'PowerShell module for the Slack API'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '3.0'

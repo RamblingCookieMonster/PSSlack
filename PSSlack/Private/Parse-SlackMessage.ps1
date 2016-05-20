@@ -42,6 +42,7 @@ Function Parse-SlackMessage {
                 Previous_2 = Extract-Previous $Message.Previous_2
                 Next = Extract-Previous $Message.Next
                 Next_2 = Extract-Previous $Message.Next_2
+                Raw = $Message
             }
         }
     }
@@ -63,6 +64,7 @@ Function Parse-SlackMessage {
                 Type = $Message.Type
                 SubType = $Message.subtype
                 Timestamp = ConvertFrom-UnixTime $Message.ts
+                Raw = $Message
             }
         }
     }
