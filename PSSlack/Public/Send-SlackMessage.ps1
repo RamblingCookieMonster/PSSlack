@@ -1,4 +1,4 @@
-﻿function Send-SlackMessage {
+function Send-SlackMessage {
     <#
     .SYNOPSIS
         Send a Slack message
@@ -214,8 +214,14 @@
 
     [cmdletbinding(DefaultParameterSetName = 'SlackMessage')]
     param (
-        [string]$Token = $Script:PSSlack.Token,
-        [string]$Uri = $Script:PSSlack.Uri,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]$Token = $PSSlack.Token,
+        
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]$Uri = $PSSlack.Uri,
 
         [PSTypeName('PSSlack.Message')]
         [parameter(ParameterSetName = 'SlackMessage',
@@ -268,15 +274,20 @@
     begin
     {
         $Messages = @()
+        if (-not $Token)
+        {
+            throw  'Did not detect a token passed. Set one with Set-PSSlackConfig.'
+        }
     }
     process
     {
         if($PSCmdlet.ParameterSetName -eq 'Param')
         {
+            $body = @{ }
 
-            $body = @{ channel = $channel }
-
-            switch ($psboundparameters.keys) {
+            switch ($psboundparameters.keys)
+            {
+                'channel'     {$body.channel = $channel }    
                 'text'        {$body.text     = $text}
                 'username'    {$body.username = $username}
                 'as_user'     {$body.asuser = $AsUser}
