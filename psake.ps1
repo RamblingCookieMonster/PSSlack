@@ -33,6 +33,15 @@ Properties {
     {
         $Verbose.add("Verbose",$True)
     }
+
+    Write-Host "Build Details`n$lines"
+    [pscustomobject]@{
+        ProjectRoot = $ProjectRoot
+        # abstract for other build systems
+        RepoBranch = $env:APPVEYOR_REPO_BRANCH # abstract for other build systems
+        CommitMessage = $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        CommitMessageExtended = $env:APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED
+    }
 }
 
 Task Default -Depends Deploy
