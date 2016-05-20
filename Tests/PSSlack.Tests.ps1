@@ -91,7 +91,39 @@ Describe "Get-PSSlackConfig PS$PSVersion" {
             $Config.Uri | Should be 'TestUri'
             $Config.Token | Should be 'TestToken'
             $Config.ArchiveUri | Should be 'TestArchive'
-
         }
     }
 }
+
+# Tests have passed, rely on set-psslackconfig...
+Set-PSSlackConfig -Uri $null -Token $null -ArchiveUri $null
+
+
+Describe "Send-SlackMessage PS$PSVersion" {
+    InModuleScope $ModuleName {
+
+        Mock -ModuleName $ModuleName -CommandName Send-SlackApi {
+            [pscustomobject]@{
+                PSB = $PSBoundParameters
+                Arg = $Args
+            }
+        }
+        Mock -ModuleName $ModuleName -CommandName Invoke-RestMethod  {
+            [pscustomobject]@{
+                PSB = $PSBoundParameters
+                Arg = $Args
+            }
+        }
+
+        It 'Should call Send-SlackApi for token auth' {
+            $x = Send-SlackMessage -Token Token -Text 'Hi'
+            Assert-MockCalled -ModuleName PSSlack -CommandName Send-SlackApi -Scope Describe
+        }
+        It 'Should call Invoke-RESTMethod for Uri auth' {
+            $x = Send-SlackMessage -Uri Uri -Text 'Hi'
+            Assert-MockCalled -ModuleName PSSlack -CommandName Invoke-RestMethod -Scope Describe
+        }
+    }
+}
+
+Remove-Item $ModulePath\PSSlack.xml -force -Confirm:$False

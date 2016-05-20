@@ -217,11 +217,11 @@ function Send-SlackMessage {
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [string]$Token = $PSSlack.Token,
+        [string]$Token = $Script:PSSlack.Token,
         
         [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [string]$Uri = $PSSlack.Uri,
+        [string]$Uri = $Script:PSSlack.Uri,
 
         [PSTypeName('PSSlack.Message')]
         [parameter(ParameterSetName = 'SlackMessage',
@@ -273,11 +273,8 @@ function Send-SlackMessage {
     )
     begin
     {
+        Write-Debug "Send-SlackMessage Bound parameters: $($PSBoundParameters | Out-String)`nParameterSetName $($PSCmdlet.ParameterSetName)"
         $Messages = @()
-        if (-not $Token)
-        {
-            throw  'Did not detect a token passed. Set one with Set-PSSlackConfig.'
-        }
     }
     process
     {
@@ -290,9 +287,9 @@ function Send-SlackMessage {
                 'channel'     {$body.channel = $channel }    
                 'text'        {$body.text     = $text}
                 'username'    {$body.username = $username}
-                'as_user'     {$body.asuser = $AsUser}
+                'asuser'      {$body.as_user = $AsUser}
                 'iconurl'     {$body.icon_url = $iconurl}
-                'link_names'  {$body.link_names = 1}
+                'linknames'   {$body.link_names = 1}
                 'parse'       {$body.parse = $Parse}
                 'UnfurlLinks' {$body.unfurl_links = $UnfurlLinks}
                 'UnfurlMedia' {$body.unfurl_media = $UnfurlMedia}
@@ -314,7 +311,6 @@ function Send-SlackMessage {
         {
             if($Token -or ($Script:PSSlack.Token -and -not $Uri))
             {
-
                 if($Message.attachments)
                 {
                     $Message.attachments = ConvertTo-Json -InputObject @($Message.attachments) -Depth 4 -Compress
