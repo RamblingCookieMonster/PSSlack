@@ -11,13 +11,17 @@
         If a command takes either a token or a uri, tokens take precedence.
 
         WARNING: Use this to store the token or uri on a filesystem at your own risk.
-                 These are sensitive data that should be encrypted where appropriate.
+                 We use the DPAPI to store this.
 
     .PARAMETER Token
         Specify a Token to use
 
+        Encrypted with the DPAPI
+
     .PARAMETER Uri
         Specify a Uri to use
+
+        Encrypted with the DPAPI
 
     .PARAMETER ArchiveUri
         Archive URI. Generally, https://<TEAMNAME>.slack.com/archives/
@@ -41,7 +45,19 @@
         'ArchiveUri'{ $Script:PSSlack.ArchiveUri = $ArchiveUri }
     }
 
+    Function Encrypt {
+        param([string]$string)
+        if($String -notlike '')
+        {
+            ConvertTo-SecureString -String $string -AsPlainText -Force
+        }
+    }
+
     #Write the global variable and the xml
-    $Script:PSSlack | Export-Clixml -Path "$ModuleRoot\PSSlack.xml" -force
+    $Script:PSSlack |
+        Select -Property ArchiveUri,
+                         @{l='Uri';e={Encrypt $_.Uri}},
+                         @{l='Token';e={Encrypt $_.Token}} |
+        Export-Clixml -Path "$ModuleRoot\PSSlack.xml" -force
 
 }

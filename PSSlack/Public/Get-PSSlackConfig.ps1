@@ -29,7 +29,19 @@
     }
     else
     {
-        Import-Clixml -Path "$ModuleRoot\PSSlack.xml"
+        function Decrypt {
+            param($String)
+            if($String -is [System.Security.SecureString])
+            {
+                [System.Runtime.InteropServices.marshal]::PtrToStringAuto(
+                    [System.Runtime.InteropServices.marshal]::SecureStringToBSTR(
+                        $string))
+            }
+        }
+        Import-Clixml -Path "$ModuleRoot\PSSlack.xml" |
+            Select -Property ArchiveUri,
+                         @{l='Uri';e={Decrypt $_.Uri}},
+                         @{l='Token';e={Decrypt $_.Token}}
     }
 
 }

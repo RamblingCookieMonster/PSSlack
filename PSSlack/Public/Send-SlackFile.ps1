@@ -60,7 +60,8 @@
         #[parameter(ParameterSetName = 'File',
         #           Mandatory = $True)]
         #[string]$Path,
-        
+
+        [string]$FileType,
         [string[]]$Channel,
         [string]$FileName,
         [String]$Title,
@@ -77,6 +78,7 @@
             'FileName'    {$body.filename = $FileName}
             'Title'       {$body.Title = $Title}
             'Comment'     {$body.comment = $Comment}
+            'FileType'    {$body.filetype = $FileType}
         }
 
         Write-Verbose "Send-SlackApi -Body $($body | Format-List | Out-String)"

@@ -186,6 +186,21 @@ New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![Fields](/Media/Fields.png)
 
+### Store and Retrieve Configs
+
+To save time and typing, you can save a token or uri to a config file (protected via DPAPI) and a module variable.
+
+This is used as the default for commands, and is reloaded if you open a new PowerShell session.
+
+```powershell
+# Save a Uri and Token.
+# If both are specified, token takes precedence.
+Set-PSSlackConfig -Uri 'SomeSlackUri' -Token 'SomeSlackToken'
+
+# Read the current cofig
+Get-PSSlackConfig
+```
+
 # Notes
 
 There are a good number of Slack functions out there, including jgigler's [PowerShell.Slack](https://github.com/jgigler/Powershell.Slack) and Steven Murawski's [Slack](https://github.com/smurawski/Slack).  We borrowed some ideas and code from these - thank you!

@@ -4,13 +4,13 @@
 RootModule = 'PSSlack.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.4'
+ModuleVersion = '0.0.5'
 
 # ID used to uniquely identify this module
 GUID = 'fb0a1f73-e16c-4829-b2a7-4fc8d7bed545'
 
 # Author of this module
-Author = 'Warren F.d'
+Author = 'Warren F.'
 
 # Company or vendor of this module
 #CompanyName = 'Unknown'
