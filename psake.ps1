@@ -41,7 +41,9 @@ Properties {
         RepoBranch = $env:APPVEYOR_REPO_BRANCH # abstract for other build systems
         CommitMessage = $env:APPVEYOR_REPO_COMMIT_MESSAGE
         CommitMessageExtended = $env:APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED
-    }
+    } |
+        Format-List |
+        Out-Host
 }
 
 Task Default -Depends Deploy

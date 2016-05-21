@@ -35,14 +35,24 @@ function Send-SlackMessage {
         See formatting spec for more information.  https://api.slack.com/docs/formatting
 
     .PARAMETER Username
-        Set your bot's user name. Must be used in conjunction with as_user set to false, otherwise ignored
+        Set your bot's user name.
+        
+        If using a Token, must be used in conjunction with as_user set to false, otherwise ignored
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
     .PARAMETER IconUrl
-        URL to an image to use as the icon for this message. Must be used in conjunction with as_user set to false, otherwise ignored.
+        URL to an image to use as the icon for this message.
+        
+        If using a Token, must be used in conjunction with as_user set to false, otherwise ignored.
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
+
+    .PARAMETER IconEmoji
+        Emoji to use as the icon for this message.
+        Overrides icon_url.
+
+        Must be used in conjunction with as_user set to false, otherwise ignored
 
     .PARAMETER AsUser
         Use true to post the message as the authed user, instead of as a bot. Defaults to false.
@@ -245,6 +255,10 @@ function Send-SlackMessage {
 
         [parameter(ParameterSetName = 'Param',
                    ValueFromPipelineByPropertyName = $True)]
+        $IconEmoji,
+
+        [parameter(ParameterSetName = 'Param',
+                   ValueFromPipelineByPropertyName = $True)]
         [switch]$AsUser,
 
         [parameter(ParameterSetName = 'Param',
@@ -289,6 +303,7 @@ function Send-SlackMessage {
                 'username'    {$body.username = $username}
                 'asuser'      {$body.as_user = $AsUser}
                 'iconurl'     {$body.icon_url = $iconurl}
+                'iconemoji'   {$body.icon_emoji   = $iconemoji}
                 'linknames'   {$body.link_names = 1}
                 'parse'       {$body.parse = $Parse}
                 'UnfurlLinks' {$body.unfurl_links = $UnfurlLinks}

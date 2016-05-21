@@ -102,13 +102,13 @@ Set-PSSlackConfig -Uri $null -Token $null -ArchiveUri $null
 Describe "Send-SlackMessage PS$PSVersion" {
     InModuleScope $ModuleName {
 
-        Mock -ModuleName $ModuleName -CommandName Send-SlackApi {
+        Mock -ModuleName PSSlack -CommandName Send-SlackApi {
             [pscustomobject]@{
                 PSB = $PSBoundParameters
                 Arg = $Args
             }
         }
-        Mock -ModuleName $ModuleName -CommandName Invoke-RestMethod  {
+        Mock -ModuleName PSSlack -CommandName Invoke-RestMethod  {
             [pscustomobject]@{
                 PSB = $PSBoundParameters
                 Arg = $Args
@@ -119,9 +119,20 @@ Describe "Send-SlackMessage PS$PSVersion" {
             $x = Send-SlackMessage -Token Token -Text 'Hi'
             Assert-MockCalled -ModuleName PSSlack -CommandName Send-SlackApi -Scope Describe
         }
+
         It 'Should call Invoke-RESTMethod for Uri auth' {
             $x = Send-SlackMessage -Uri Uri -Text 'Hi'
             Assert-MockCalled -ModuleName PSSlack -CommandName Invoke-RestMethod -Scope Describe
+        }
+
+        It 'Should not pass parameters if not specified' {
+            $x = Send-SlackMessage -Token Token -Text 'Hi'
+            $x.arg.count | Should be 6
+            $x.arg -contains '-Body:' | Should Be $True
+            $x.arg -contains '-Method:' | Should Be $True
+            $x.arg -contains '-Token:' | Should Be $True
+            $x.arg -contains 'Token' | Should Be $True
+            $x.arg -contains 'chat.postMessage' | Should Be $True
         }
     }
 }

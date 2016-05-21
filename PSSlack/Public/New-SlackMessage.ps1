@@ -24,7 +24,9 @@
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
     .PARAMETER IconUrl
-        URL to an image to use as the icon for this message. Must be used in conjunction with as_user set to false, otherwise ignored.
+        URL to an image to use as the icon for this message.
+        
+        If using a token, must be used in conjunction with as_user set to false, otherwise ignored.
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
@@ -32,10 +34,12 @@
         Emoji to use as the icon for this message.
         Overrides icon_url.
 
-        Must be used in conjunction with as_user set to false, otherwise ignored
+        If using a token, must be used in conjunction with as_user set to false, otherwise ignored
 
     .PARAMETER AsUser
         Use true to post the message as the authed user, instead of as a bot. Defaults to false.
+
+        Only used when authorizing with a token
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
