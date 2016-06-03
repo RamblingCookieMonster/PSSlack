@@ -59,8 +59,8 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
             Set-PSSlackConfig @params
             $Config = Import-Clixml $ModulePath\PSSlack.xml
 
-            $Config.Uri | Should be 'TestUri'
-            $Config.Token | Should be 'TestToken'
+            $Config.Uri | Should be 'System.Security.SecureString'
+            $Config.Token | Should be 'System.Security.SecureString'
             $Config.ArchiveUri | Should be 'TestArchive'
         }
     }
