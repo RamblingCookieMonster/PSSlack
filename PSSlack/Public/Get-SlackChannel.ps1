@@ -35,10 +35,13 @@
     {
         Write-Verbose "$($PSBoundParameters | Out-String)"
 
-        $body = @{}
         if($ExcludeArchived)
         {
-            $body.add('exclude_archived', 1)
+            $body = @{ exclude_archived = 1 }
+        }
+        else
+        {
+            $body = @{ exclude_archived = 0 }
         }
         $params = @{
             Body = $body
