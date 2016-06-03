@@ -25,7 +25,16 @@
         If specified, include history from the date specified in Before and/or After parameters
 
     .PARAMETER Count
-        Number of messages to return.  Defaults to 100.  Max 1000
+        Number of messages to return per query.  Defaults to 100.  Max 1000
+
+    .PARAMETER Paging
+        If specified, and more data is available with a given 'Count', continue querying Slack until
+            we have retrieved all the data available.
+
+        WARNING: This parameter is experimental
+
+    .PARAMETER MaxQueries
+        Limit the count of API queries to this number.  Only used if you enable -Paging
 
     .PARAMETER Raw
         If specified, we provide raw output and do not parse any responses
@@ -45,7 +54,8 @@
         [switch]$Inclusive,
         [datetime]$Before,
         [datetime]$After,
-        #[int]$PageInterval,
+        [switch]$Paging,
+        [int]$MaxQueries,
         [switch]$Raw
 
     )
@@ -59,7 +69,10 @@
 
         Write-Verbose "$($PSBoundParameters | Out-String)"
 
-        $body = @{ channel = $null }
+        $body = @{
+            channel = $null
+            count = $count
+        }
         if($PSBoundParameters.ContainsKey('Before'))
         {
             $BeforeTS = Get-UnixTime -Date $Before
@@ -79,49 +92,63 @@
             Method = 'channels.history'
             Body = $body
         }
+        $Queries = 1
 
     }
     process
     {
         foreach($ID in $ChannelID)
         {
+            $has_more = $false
             $Params.body.channel = $ID
-            $response = Send-SlackApi @params
-            if ($response.ok)
+            do
             {
-                if($Raw)
+                if($has_more)
                 {
-                    $link = "$($Script:PSSlack.ArchiveUri)/$($response.channel)/p$($response.ts -replace '\.')"
-                    $response | Add-Member -MemberType NoteProperty -Name link -Value $link
+                    if($Params.Body.oldest)
+                    {
+                        [void]$Params.Body.remove('oldest')
+                    }
+                    $Params.body.latest = $ts
+                    $has_more = $false
+                    Write-Debug "Body is now:$($params.body | out-string)"
+                }
+                $response = Send-SlackApi @params
+
+                Write-Debug "$($Response | Format-List -Property * | Out-String)"
+
+                if ($response.ok)
+                {
+
+                    if($response.psobject.properties.name -contains 'has_more' -and $response.has_more)
+                    {
+                        Write-Debug 'Paging engaged!'
+                        $has_more = $true
+                        $ts = $response.messages[-1].ts
+                    }
+
+                    if($Raw)
+                    {
+                        $link = "$($Script:PSSlack.ArchiveUri)/$($response.channel)/p$($response.ts -replace '\.')"
+                        $response | Add-Member -MemberType NoteProperty -Name link -Value $link
+                        $response
+                    }
+                    else
+                    {
+                        Parse-SlackMessage -InputObject $Response
+                    }
+                }
+                else 
+                {
                     $response
                 }
-                else
-                {
-                    Parse-SlackMessage -InputObject $Response
-                }
+                $Queries++
             }
-            else 
-            {
-                $response
-            }
+            until (
+                -not $Paging -or
+                -not $has_more -or
+                ($MaxQueries -and $Queries -gt $MaxQueries)
+            )
         }
     }
 }
-
-<#
-
-TODO:   PARAMETER PageInterval
-        If specified, break the specified search into chunks of this many minutes.
-        Before, After, and Count properties are respected.
-
-        Example:
-            After 6/1/2016 12:00
-            Count 999
-            PageInterval 60
-
-            This results in us searching history...
-                from 6/1/2016 until the current date,
-                60 minutes at a time,
-                collecting 999 messages max per 60 minute interval
-
-#>
