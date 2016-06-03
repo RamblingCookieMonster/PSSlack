@@ -43,6 +43,9 @@
         [ValidateRange(1,1000)]
         [int]$Count = 100,
         [switch]$Inclusive,
+        [datetime]$Before,
+        [datetime]$After,
+        #[int]$PageInterval,
         [switch]$Raw
 
     )
@@ -60,12 +63,12 @@
         if($PSBoundParameters.ContainsKey('Before'))
         {
             $BeforeTS = Get-UnixTime -Date $Before
-            $body.add('oldest', $BeforeTS)
+            $body.add('latest', $BeforeTS)
         }
         if($PSBoundParameters.ContainsKey('After'))
         {
             $AfterTS = Get-UnixTime -Date $After
-            $body.add('latest', $AfterTS)
+            $body.add('oldest', $AfterTS)
         }
         if($Inclusive)
         {
@@ -104,3 +107,21 @@
         }
     }
 }
+
+<#
+
+TODO:   PARAMETER PageInterval
+        If specified, break the specified search into chunks of this many minutes.
+        Before, After, and Count properties are respected.
+
+        Example:
+            After 6/1/2016 12:00
+            Count 999
+            PageInterval 60
+
+            This results in us searching history...
+                from 6/1/2016 until the current date,
+                60 minutes at a time,
+                collecting 999 messages max per 60 minute interval
+
+#>
