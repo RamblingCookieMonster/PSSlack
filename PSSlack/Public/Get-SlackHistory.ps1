@@ -73,6 +73,12 @@
             channel = $null
             count = $count
         }
+        if($Paging)
+        {
+            $PageDirection = 'Backward'
+        }
+        $BeforeTS = $null
+        $AfterTS = $null
         if($PSBoundParameters.ContainsKey('Before'))
         {
             $BeforeTS = Get-UnixTime -Date $Before
@@ -82,6 +88,10 @@
         {
             $AfterTS = Get-UnixTime -Date $After
             $body.add('oldest', $AfterTS)
+            if(-not $PSBoundParameters.ContainsKey('Before') -and $Paging)
+            {
+                $PageDirection = 'Forward'
+            }
         }
         if($Inclusive)
         {
@@ -109,7 +119,47 @@
                     {
                         [void]$Params.Body.remove('oldest')
                     }
-                    $Params.body.latest = $ts
+                    if($Params.Body.latest)
+                    {
+                        [void]$Params.Body.remove('latest')
+                    }
+                    if($PageDirection -eq 'Forward')
+                    {
+
+                        $ts = $response.messages.ts | sort | Select -last 1
+                        $Params.body.oldest = $ts
+                        Write-Debug "Paging Forward.`n$(
+                            [pscustomobject]@{
+                                After = $After
+                                Before = $Before
+                                LastTS = $response.messages[-1].ts
+                                SortLast = $response.messages.ts | sort | Select -last 1
+                                SortFirst = $response.messages.ts | sort | Select -first 1
+                                ts = $ts
+                            } | Out-String
+                        )"
+                    }
+                    elseif($PageDirection -eq 'Backward')
+                    {
+                        $ts = $response.messages[-1].ts
+                        if($AfterTS -and $ts -lt $AfterTS)
+                        {
+                            Write-Debug "TS is less than AfterTS, breaking!"
+                            break
+                        }
+                        $Params.body.latest = $ts
+                        Write-Debug "Paging Forward.`n$(
+                            [pscustomobject]@{
+                                After = $After
+                                Before = $Before
+                                LastTS = $response.messages[-1].ts
+                                SortLast = $response.messages.ts | sort | Select -last 1
+                                SortFirst = $response.messages.ts | sort | Select -first 1
+                                ts = $ts
+                            } | Out-String
+                        )"
+                    }
+
                     $has_more = $false
                     Write-Debug "Body is now:$($params.body | out-string)"
                 }
@@ -124,7 +174,6 @@
                     {
                         Write-Debug 'Paging engaged!'
                         $has_more = $true
-                        $ts = $response.messages[-1].ts
                     }
 
                     if($Raw)
@@ -135,7 +184,15 @@
                     }
                     else
                     {
-                        Parse-SlackMessage -InputObject $Response
+                        #Order our messages appropriately according to page direction
+                        if($Paging -and $PageDirection -eq 'Forward')
+                        {
+                            Parse-SlackMessage -InputObject $Response | Sort TimeStamp
+                        }
+                        else
+                        {
+                            Parse-SlackMessage -InputObject $Response
+                        }
                     }
                 }
                 else 

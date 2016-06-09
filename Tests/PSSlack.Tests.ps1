@@ -1,12 +1,16 @@
-$Verbose = @{}
-if($env:APPVEYOR_REPO_BRANCH -and $env:APPVEYOR_REPO_BRANCH -notlike "master")
-{
-    $Verbose.add("Verbose",$True)
-}
-
 $PSVersion = $PSVersionTable.PSVersion.Major
-$ModuleName = 'PSSlack'
-$ModulePath = (Get-Item "$PSScriptRoot\..\$ModuleName").FullName
+$ModuleName = $ENV:BHProjectName
+
+# Verbose output for non-master builds on appveyor
+# Handy for troubleshooting.
+# Splat @Verbose against commands as needed (here or in pester tests)
+    $Verbose = @{}
+    if($ENV:BHBranchName -notlike "master" -or $env:BHCommitMessage -match "!verbose")
+    {
+        $Verbose.add("Verbose",$True)
+    }
+
+Import-Module $PSScriptRoot\..\$ModuleName -Force
 
 $TestUri = 'TestUri'
 $TestToken = 'TestToken'

@@ -11,19 +11,15 @@
 
  # Nuget key in $ENV:NugetApiKey
 
+ # Set-BuildEnvironment from BuildHelpers module has populated ENV:BHProjectName
+
 # find a folder that has psd1 of same name...
-$Script:ModuleToDeploy = Get-ChildItem $PSScriptRoot -Directory |
-    Where-Object {
-        Test-Path $(Join-Path $_.FullName "$($_.name).psd1";)
-    } |
-    Select -ExpandProperty Fullname
 
-if($ModuleToDeploy -and $ModuleToDeploy.Count -eq 1)
+if($ENV:BHProjectName -and $ENV:BHProjectName.Count -eq 1)
 {
-
     Deploy Module {
         By PSGalleryModule {
-            FromSource $Script:ModuleToDeploy
+            FromSource $ENV:BHProjectName
             To PSGallery
             WithOptions @{
                 ApiKey = $ENV:NugetApiKey
