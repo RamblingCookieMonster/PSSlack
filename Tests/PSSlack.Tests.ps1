@@ -1,6 +1,6 @@
 $PSVersion = $PSVersionTable.PSVersion.Major
 $ModuleName = $ENV:BHProjectName
-
+$ModulePath = "$PSScriptRoot\..\$ModuleName"
 # Verbose output for non-master builds on appveyor
 # Handy for troubleshooting.
 # Splat @Verbose against commands as needed (here or in pester tests)
@@ -10,13 +10,12 @@ $ModuleName = $ENV:BHProjectName
         $Verbose.add("Verbose",$True)
     }
 
-Import-Module $PSScriptRoot\..\$ModuleName -Force
+
+Import-Module $ModulePath -Force
 
 $TestUri = 'TestUri'
 $TestToken = 'TestToken'
 $TestArchive = 'TestArchive'
-
-Import-Module $ModulePath -Force
 
 Describe "PSSlack Module PS$PSVersion" {
     Context 'Strict mode' {
@@ -35,7 +34,7 @@ Describe "PSSlack Module PS$PSVersion" {
             $Commands -contains 'Send-SlackMessage' | Should Be $True
         }
 
-        It 'Should not have empty values in PSSlack.xml' {
+        It 'Should have empty values in PSSlack.xml' {
             $Config = Import-Clixml $ModulePath\PSSlack.xml
             $Props = $Config.PSObject.Properties.Name
             #Loop is faster but less clear in failed tests.
