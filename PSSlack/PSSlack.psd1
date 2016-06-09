@@ -4,7 +4,7 @@
 RootModule = 'PSSlack.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.8'
+ModuleVersion = '0.0.9'
 
 # ID used to uniquely identify this module
 GUID = 'fb0a1f73-e16c-4829-b2a7-4fc8d7bed545'
@@ -84,7 +84,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-         Tags = @('Slack', 'Chat', 'Message', 'Messaging')
+         Tags = @('Slack', 'Chat', 'Message', 'Messaging', 'ChatOps')
 
         # A URL to the license for this module.
          LicenseUri = 'https://github.com/RamblingCookieMonster/PSSlack/blob/master/LICENSE'
