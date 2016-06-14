@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/kuxiy9m0g19g04o0?svg=true)](https://ci.appveyor.com/project/RamblingCookieMonster/psslack)
+
 PSSlack
 =============
 
