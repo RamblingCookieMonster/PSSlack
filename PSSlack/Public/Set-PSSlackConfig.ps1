@@ -28,6 +28,9 @@
 
         Used to generate a link to a specific archive URI, where appropriate
 
+    .PARAMETER Path
+        If specified, save config file to this file path.  Defaults to PSSlack.xml in the module root.
+
     .FUNCTIONALITY
         Slack
     #>
@@ -35,7 +38,8 @@
     param(
         [string]$Uri,
         [string]$Token,
-        [string]$ArchiveUri
+        [string]$ArchiveUri,
+        [string]$Path = "$ModuleRoot\PSSlack.xml"
     )
 
     Switch ($PSBoundParameters.Keys)
@@ -58,6 +62,6 @@
         Select -Property ArchiveUri,
                          @{l='Uri';e={Encrypt $_.Uri}},
                          @{l='Token';e={Encrypt $_.Token}} |
-        Export-Clixml -Path "$ModuleRoot\PSSlack.xml" -force
+        Export-Clixml -Path $Path -force
 
 }

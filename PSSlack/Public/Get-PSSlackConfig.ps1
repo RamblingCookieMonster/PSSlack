@@ -14,16 +14,26 @@
 
         Defaults to PSSlack
 
+    .PARAMETER Path
+        If specified, read config from this XML file.
+        
+        Defaults to PSSlack.xml in the module root
+
     .FUNCTIONALITY
         Slack
     #>
-    [cmdletbinding()]
+    [cmdletbinding(DefaultParameterSetName = 'source')]
     param(
+        [parameter(ParameterSetName='source')]
         [ValidateSet("PSSlack","PSSlack.xml")]
-        $Source = "PSSlack"
+        $Source = "PSSlack",
+
+        [parameter(ParameterSetName='path')]
+        [parameter(ParameterSetName='source')]
+        $Path = "$ModuleRoot\PSSlack.xml"
     )
     
-    if($Source -eq "PSSlack")
+    if($PSCmdlet.ParameterSetName -eq 'source' -and $Source -eq "PSSlack")
     {
         $Script:PSSlack
     }
@@ -38,7 +48,7 @@
                         $string))
             }
         }
-        Import-Clixml -Path "$ModuleRoot\PSSlack.xml" |
+        Import-Clixml -Path $Path |
             Select -Property ArchiveUri,
                          @{l='Uri';e={Decrypt $_.Uri}},
                          @{l='Token';e={Decrypt $_.Token}}

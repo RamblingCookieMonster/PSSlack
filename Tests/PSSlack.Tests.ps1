@@ -1,6 +1,7 @@
 $PSVersion = $PSVersionTable.PSVersion.Major
 $ModuleName = $ENV:BHProjectName
-$ModulePath = "$PSScriptRoot\..\$ModuleName"
+$ModulePath = Join-Path $ENV:BHProjectPath $ModuleName
+
 # Verbose output for non-master builds on appveyor
 # Handy for troubleshooting.
 # Splat @Verbose against commands as needed (here or in pester tests)
@@ -16,6 +17,7 @@ Import-Module $ModulePath -Force
 $TestUri = 'TestUri'
 $TestToken = 'TestToken'
 $TestArchive = 'TestArchive'
+$AlternativePath = 'C:\ThisSlackXml.xml'
 
 Describe "PSSlack Module PS$PSVersion" {
     Context 'Strict mode' {
@@ -57,7 +59,7 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
             $Params = @{
                 Uri= $TestUri
                 Token = $TestToken
-                ArchiveUri = $TestArchive 
+                ArchiveUri = "$TestArchive"
             }
             Set-PSSlackConfig @params
             $Config = Import-Clixml $ModulePath\PSSlack.xml
@@ -65,6 +67,21 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
             $Config.Uri | Should be 'System.Security.SecureString'
             $Config.Token | Should be 'System.Security.SecureString'
             $Config.ArchiveUri | Should be 'TestArchive'
+        }
+
+        It 'Should set a user-specified file' {
+            $Params = @{
+                Uri= $TestUri
+                Token = $TestToken
+                ArchiveUri = "$TestArchive`x"
+                Path = $AlternativePath
+            }
+            Set-PSSlackConfig @params
+            $Config = Import-Clixml $AlternativePath
+
+            $Config.Uri | Should be 'System.Security.SecureString'
+            $Config.Token | Should be 'System.Security.SecureString'
+            $Config.ArchiveUri | Should be 'TestArchivex'           
         }
     }
 }
@@ -83,17 +100,25 @@ Describe "Get-PSSlackConfig PS$PSVersion" {
         }
         
         It 'Should read PSSlack variable' {
-            [pscustomobject]@{
-                Uri= $TestUri
-                Token = $TestToken
-                ArchiveUri = $TestArchive 
-            } | Export-Clixml -Path $ModulePath\PSSlack.xml -Force -Confirm:$False
-
             $Config = Get-PSSlackConfig -Source PSSlack
 
             $Config.Uri | Should be 'TestUri'
             $Config.Token | Should be 'TestToken'
-            $Config.ArchiveUri | Should be 'TestArchive'
+            $Config.ArchiveUri | Should be 'TestArchivex' #From running alternate path test before...
+        }
+
+        It 'Should read a user-specified file' {
+            [pscustomobject]@{
+                Uri= $TestUri
+                Token = $TestToken
+                ArchiveUri = "$TestArchive`x"
+            } | Export-Clixml -Path $AlternativePath -Force -Confirm:$False
+
+            $Config = Get-PSSlackConfig -Path $AlternativePath
+
+            $Config.Uri | Should be 'TestUri'
+            $Config.Token | Should be 'TestToken'
+            $Config.ArchiveUri | Should be 'TestArchivex'
         }
     }
 }
@@ -141,3 +166,4 @@ Describe "Send-SlackMessage PS$PSVersion" {
 }
 
 Remove-Item $ModulePath\PSSlack.xml -force -Confirm:$False
+Remove-Item $AlternativePath -Force -Confirm:$False
