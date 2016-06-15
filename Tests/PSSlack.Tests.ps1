@@ -108,11 +108,14 @@ Describe "Get-PSSlackConfig PS$PSVersion" {
         }
 
         It 'Should read a user-specified file' {
-            [pscustomobject]@{
+            # We've tested set... use it here.
+            $Params = @{
                 Uri= $TestUri
                 Token = $TestToken
                 ArchiveUri = "$TestArchive`x"
-            } | Export-Clixml -Path $AlternativePath -Force -Confirm:$False
+                Path = $AlternativePath
+            }
+            Set-PSSlackConfig @params
 
             $Config = Get-PSSlackConfig -Path $AlternativePath
 
