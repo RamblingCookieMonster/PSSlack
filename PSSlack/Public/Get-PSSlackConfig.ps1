@@ -33,7 +33,7 @@
         $Path = "$ModuleRoot\PSSlack.xml"
     )
     
-    if($PSCmdlet.ParameterSetName -eq 'source' -and $Source -eq "PSSlack")
+    if($PSCmdlet.ParameterSetName -eq 'source' -and $Source -eq "PSSlack" -and -not $PSBoundParameters.ContainsKey('Path'))
     {
         $Script:PSSlack
     }
