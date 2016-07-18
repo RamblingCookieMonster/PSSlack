@@ -4,7 +4,7 @@
 RootModule = 'PSSlack.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.11'
+ModuleVersion = '0.0.12'
 
 # ID used to uniquely identify this module
 GUID = 'fb0a1f73-e16c-4829-b2a7-4fc8d7bed545'
@@ -109,3 +109,6 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
+
+

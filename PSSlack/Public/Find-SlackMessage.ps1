@@ -57,7 +57,7 @@
     [cmdletbinding()]
     param (
         [string]$Query,
-        $Token,
+        $Token = $Script:PSSlack.Token,
         [validateset('asc','desc')]
         $SortDirection = 'desc',
         [validateset('score','timestamp')]
@@ -83,7 +83,7 @@
             Body = $Body
             Method = 'search.messages'
         }
-        if($PSBoundParameters.ContainsKey('Token'))
+        if($Token)
         {
             $Params.Add('Token',$token)
         }
