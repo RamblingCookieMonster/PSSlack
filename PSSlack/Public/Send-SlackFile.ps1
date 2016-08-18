@@ -6,9 +6,6 @@
     .DESCRIPTION
         Send a Slack file
 
-        We currently only support the 'Content' option for uploads. PRs for 'File' welcome :)
-        https://api.slack.com/methods/files.upload
-
     .PARAMETER Token
         Token to use for the Slack API
 
