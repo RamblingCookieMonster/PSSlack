@@ -129,10 +129,8 @@
             $bodyLines += "--$boundary--$LF"
             
             try {
-                # Submit form-data with Invoke-RestMethod-Cmdlet
                 $response = Invoke-RestMethod -Uri $uri -Method Post -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
             }
-            # In case of emergency...
             catch [System.Net.WebException] {
                 Write-Error( "Rest call failed for $uri`: $_" )
                 throw $_
