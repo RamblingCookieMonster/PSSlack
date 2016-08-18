@@ -64,12 +64,7 @@
         [parameter(ParameterSetName = 'Content')]
         [string]$FileType,
 
-        [parameter(ParameterSetName = 'Content',
-            Mandatory = $True)]
-        [parameter(ParameterSetName = 'File',
-            Mandatory = $True)]
         [string[]]$Channel,
-
         [string]$FileName,
         [String]$Title,
         [String]$Comment
