@@ -8,6 +8,7 @@
     {
         Try
         {
+            Add-Type -Assembly System.Drawing
             . $import.fullname
         }
         Catch
@@ -43,7 +44,7 @@
 
     }
     Catch
-    {   
+    {
         Write-Warning "Error importing PSSlack config: $_"
     }
 
