@@ -4,6 +4,15 @@
     $ModuleRoot = $PSScriptRoot
 
 #Dot source the files
+
+# Import System.Drawing Assembly
+Try {
+    Add-Type -Assembly System.Drawing
+}
+Catch {
+    Write-Error -Message "Failed to import System.Drawing assembly: $_"
+}
+
     Foreach($import in @($Public + $Private))
     {
         Try
@@ -43,7 +52,7 @@
 
     }
     Catch
-    {   
+    {
         Write-Warning "Error importing PSSlack config: $_"
     }
 
