@@ -41,6 +41,13 @@
         # Send a slack file that turns into a snippet.
         # Use perl, because PowerShell syntax highlighting is sad
 
+    .EXAMPLE
+        Send-SlackFile -Channel '@wframe' `
+                       -path C:\homer.gif `
+                       -title homer
+
+        # Send a gif to @wframe using a previously-stored token (Set-PSSlackConfig)
+
     .FUNCTIONALITY
         Slack
     #>

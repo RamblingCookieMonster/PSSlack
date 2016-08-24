@@ -63,7 +63,8 @@ Task Build -Depends Test {
     Set-ModuleFunctions @Verbose
 
     # Bump the module version
-    Update-Metadata @Verbose -Path $env:BHPSModuleManifest
+    $Version = Get-NextPSGalleryVersion -Name $env:BHProjectName
+    Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ModuleVersion -Value $Version
 }
 
 Task Deploy -Depends Build {
