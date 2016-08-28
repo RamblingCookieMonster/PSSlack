@@ -30,7 +30,7 @@
 
         [parameter(ParameterSetName='path')]
         [parameter(ParameterSetName='source')]
-        $Path = "$ModuleRoot\PSSlack.xml"
+        $Path = "$ModuleRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
     )
     
     if($PSCmdlet.ParameterSetName -eq 'source' -and $Source -eq "PSSlack" -and -not $PSBoundParameters.ContainsKey('Path'))

@@ -39,7 +39,7 @@
         [string]$Uri,
         [string]$Token,
         [string]$ArchiveUri,
-        [string]$Path = "$ModuleRoot\PSSlack.xml"
+        [string]$Path = "$ModuleRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
     )
 
     Switch ($PSBoundParameters.Keys)
