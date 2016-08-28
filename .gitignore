@@ -1,2 +1,4 @@
 Manifest.xml
-PSSlack/PSSlack.xml
+**PSSlack.xml
+**Send-SlackUpdate.ps1
+PSSlack/X11ColorList.txt

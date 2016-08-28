@@ -4,7 +4,7 @@
 RootModule = 'PSSlack.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.12'
+ModuleVersion = '0.0.15'
 
 # ID used to uniquely identify this module
 GUID = 'fb0a1f73-e16c-4829-b2a7-4fc8d7bed545'
@@ -58,7 +58,7 @@ PowerShellVersion = '3.0'
 # NestedModules = @()
 
 # Functions to export from this module
-FunctionsToExport = '*'
+FunctionsToExport = @('Find-SlackMessage','Get-PSSlackConfig','Get-SlackChannel','Get-SlackGroup','Get-SlackGroupHistory','Get-SlackHistory','Get-SlackUser','New-SlackField','New-SlackMessage','New-SlackMessageAttachment','Send-SlackApi','Send-SlackFile','Send-SlackMessage','Set-PSSlackConfig')
 
 # Cmdlets to export from this module
 CmdletsToExport = '*'
@@ -109,6 +109,8 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
+
+
 
 
 
