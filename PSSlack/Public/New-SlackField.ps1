@@ -43,7 +43,7 @@
             URL = 'https://www.youtube.com/watch?v=TmpRs7xN06Q'
         } | New-SlackField -Short
 
-        New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
                                    -Fields $Fields `
                                    -Fallback 'Your client is bad' |
             New-SlackMessage -Channel '@wframe' `

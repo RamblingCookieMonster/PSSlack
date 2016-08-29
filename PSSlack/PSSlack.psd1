@@ -64,7 +64,7 @@ FunctionsToExport = '*'
 CmdletsToExport = '*'
 
 # Variables to export from this module
-VariablesToExport = '*'
+VariablesToExport = '_PSSlackColorMap'
 
 # Aliases to export from this module
 AliasesToExport = '*'

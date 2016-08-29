@@ -27,7 +27,9 @@ function New-SlackMessageAttachment
         There are two options for this value:
 
             Use Hex Web Colors to define the color. e.g. -Color #FF0000
-            Use a System.Drawing.Color.             e.g. -Color $( [System.Drawing.Color]::Red )
+            Use $_PSSlackColorMap.                  e.g. -Color $_PSSlackColorMap.orange
+
+            See $_PSSlackColorMap for a full list of colors.
 
         This parameter cannot be used in conjuction with the Severity Parameter.
 
@@ -86,7 +88,7 @@ function New-SlackMessageAttachment
         # giving you a richer message
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
-        New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
                                    -Text 'Please Do The Needful' `
@@ -108,13 +110,13 @@ function New-SlackMessageAttachment
 
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
-        New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
                                    -Text 'Everybody panic!' `
                                    -Pretext 'Everything is broken' `
                                    -Fallback 'Your client is bad' |
-            New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+            New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
                                        -Title 'The Other System Is Down' `
                                        -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
                                        -Text 'Please Do The Needful' `
@@ -157,7 +159,7 @@ function New-SlackMessageAttachment
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
         # Construct and send the message!
-        New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
                                    -Title 'Failed to process account' `
                                    -Fields $Fields `
                                    -Fallback 'Your client is bad' |
@@ -228,17 +230,9 @@ function New-SlackMessageAttachment
     Process
     {
         #consolidate the colour and severity parameters for the API.
-        switch($PSCmdlet.ParameterSetName)
+        if($PSCmdlet.ParameterSetName -like 'Severity')
         {
-            'Severity' {
-                $Color = $Severity
-            }
-            'Color' {
-                if($Color -is [System.Drawing.Color])
-                {
-                    [string]$Color = Color-ToNumber $Color
-                }
-            }
+            $Color = $Severity
         }
 
         $Attachment = @{}

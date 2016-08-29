@@ -123,7 +123,7 @@ Notice that the title is clickable.  You might link to...
 
 $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
-New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
                            -Title 'The System Is Down' `
                            -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
                            -Text 'Everybody panic!' `
@@ -204,6 +204,11 @@ Get-PSSlackConfig
 ```
 
 # Notes
+
+Currently evaluating .NET Core / Cross-platform functionality.  The following will not work initially:
+
+* Serialization of URIs and tokens via Set-PSSlackConfig.  Use explicit parameters.
+* [System.Drawing.Color]::SomeColor shortcut.  Use the provided $_PSSlackColorMap hash to simplify this.  E.g. $_PSSlackColorMap.red
 
 There are a good number of Slack functions out there, including jgigler's [PowerShell.Slack](https://github.com/jgigler/Powershell.Slack) and Steven Murawski's [Slack](https://github.com/smurawski/Slack).  We borrowed some ideas and code from these - thank you!
 
