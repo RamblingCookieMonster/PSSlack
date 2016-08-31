@@ -72,7 +72,7 @@
         # giving you a richer message
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
-        New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
                                    -Text 'Please Do The Needful' `
@@ -94,13 +94,13 @@
 
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
-        New-SlackMessageAttachment -Color $([System.Drawing.Color]::red) `
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
                                    -Text 'Everybody panic!' `
                                    -Pretext 'Everything is broken' `
                                    -Fallback 'Your client is bad' |
-            New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+            New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
                                        -Title 'The Other System Is Down' `
                                        -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
                                        -Text 'Please Do The Needful' `
@@ -143,7 +143,7 @@
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
         # Construct and send the message!
-        New-SlackMessageAttachment -Color $([System.Drawing.Color]::Orange) `
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
                                    -Title 'Failed to process account' `
                                    -Fields $Fields `
                                    -Fallback 'Your client is bad' |

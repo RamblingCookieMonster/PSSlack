@@ -1,8 +1,13 @@
 ﻿Function Color-ToNumber {
+    [cmdletbinding()]
     param(
-        [System.Drawing.Color]$Color
+        [object]$Color
     )
-    '#{0:X2}{1:X2}{2:X2}' -f $Color.R,
-                             $Color.G,
-                             $Color.B
+    if(-not $IsCoreCLR)
+    {
+        [System.Drawing.Color] $Color = $Color
+        '#{0:X2}{1:X2}{2:X2}' -f $Color.R,
+                                 $Color.G,
+                                 $Color.B
+    }
 }
