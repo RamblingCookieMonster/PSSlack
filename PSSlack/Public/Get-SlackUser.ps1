@@ -17,6 +17,9 @@
     .Parameter Name
         Optional. One or more names to search for. Accepts wildcards.
 
+    .Parameter Raw
+        Return raw output.  If specified, Name parameter is ignored
+
     .EXAMPLE
         Get-SlackUser -Token $Token `
                       -Name ps*
@@ -37,7 +40,8 @@
         [string]$Token = $Script:PSSlack.Token,
         [string[]]$Name,
         [switch]$Presence,
-        [switch]$ExcludeBots
+        [switch]$ExcludeBots,
+        [switch]$Raw
     )
     begin
     {
@@ -46,10 +50,14 @@
         {
             $body.add('presence', 1)
         }
+
         $params = @{
-            Body = $body
             Token = $Token
             Method = 'users.list'
+        }
+        if($body.keys.count -gt 0)
+        {
+            $params.add('body', $Body)
         }
         $RawUsers = Send-SlackApi @params
 
