@@ -37,7 +37,7 @@ Describe "PSSlack Module PS$PSVersion" {
         }
 
         It 'Should have empty values in PSSlack.xml' {
-            $Config = Import-Clixml $ModulePath\PSSlack.xml
+            $Config = Import-Clixml "$ModulePath\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
             $Props = $Config.PSObject.Properties.Name
             #Loop is faster but less clear in failed tests.
             $Props -contains 'Uri' | Should be $True
@@ -62,7 +62,7 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
                 ArchiveUri = "$TestArchive"
             }
             Set-PSSlackConfig @params
-            $Config = Import-Clixml $ModulePath\PSSlack.xml
+            $Config = Import-Clixml "$ModulePath\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
 
             $Config.Uri | Should be 'System.Security.SecureString'
             $Config.Token | Should be 'System.Security.SecureString'
@@ -168,5 +168,5 @@ Describe "Send-SlackMessage PS$PSVersion" {
     }
 }
 
-Remove-Item $ModulePath\PSSlack.xml -force -Confirm:$False
+Remove-Item $ModulePath\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml -force -Confirm:$False
 Remove-Item $AlternativePath -Force -Confirm:$False

@@ -34,20 +34,20 @@ Foreach($import in @($Public + $Private))
 }
 
 #Create / Read config
-    if(-not (Test-Path -Path "$PSScriptRoot\PSSlack.xml" -ErrorAction SilentlyContinue))
+    if(-not (Test-Path -Path "$PSScriptRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml" -ErrorAction SilentlyContinue))
     {
         Try
         {
-            Write-Warning "Did not find config file $PSScriptRoot\PSSlack.xml, attempting to create"
+            Write-Warning "Did not find config file $PSScriptRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml, attempting to create"
             [pscustomobject]@{
                 Uri = $null
                 Token = $null
                 ArchiveUri = $null
-            } | Export-Clixml -Path "$PSScriptRoot\PSSlack.xml" -Force -ErrorAction Stop
+            } | Export-Clixml -Path "$PSScriptRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml" -Force -ErrorAction Stop
         }
         Catch
         {
-            Write-Warning "Failed to create config file $PSScriptRoot\PSSlack.xml: $_"
+            Write-Warning "Failed to create config file $PSScriptRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml: $_"
         }
     }
 
