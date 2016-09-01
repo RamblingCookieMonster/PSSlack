@@ -168,5 +168,5 @@ Describe "Send-SlackMessage PS$PSVersion" {
     }
 }
 
-Remove-Item $ModulePath\PSSlack.xml -force -Confirm:$False
+Remove-Item $ModulePath\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml -force -Confirm:$False
 Remove-Item $AlternativePath -Force -Confirm:$False
