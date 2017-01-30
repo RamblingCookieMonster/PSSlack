@@ -79,8 +79,8 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
             Set-PSSlackConfig @params
             $Config = Import-Clixml $AlternativePath
 
-            $Config.Uri | Should be 'System.Security.SecureString'
-            $Config.Token | Should be 'System.Security.SecureString'
+            $Config.Uri | Should BeOfType 'System.Security.SecureString'
+            $Config.Token | Should BeOfType 'System.Security.SecureString'
             $Config.ArchiveUri | Should be 'TestArchivex'
         }
     }
