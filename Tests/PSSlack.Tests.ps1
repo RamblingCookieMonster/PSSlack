@@ -64,8 +64,8 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
             Set-PSSlackConfig @params
             $Config = Import-Clixml "$ModulePath\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
 
-            $Config.Uri | Should be 'System.Security.SecureString'
-            $Config.Token | Should be 'System.Security.SecureString'
+            $Config.Uri | Should BeOfType System.Security.SecureString
+            $Config.Token | Should BeOfType System.Security.SecureString
             $Config.ArchiveUri | Should be 'TestArchive'
         }
 
@@ -81,7 +81,7 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
 
             $Config.Uri | Should be 'System.Security.SecureString'
             $Config.Token | Should be 'System.Security.SecureString'
-            $Config.ArchiveUri | Should be 'TestArchivex'           
+            $Config.ArchiveUri | Should be 'TestArchivex'
         }
     }
 }
@@ -98,7 +98,7 @@ Describe "Get-PSSlackConfig PS$PSVersion" {
             $Config.Token | Should be 'TestToken'
             $Config.ArchiveUri | Should be 'TestArchive'
         }
-        
+
         It 'Should read PSSlack variable' {
             $Config = Get-PSSlackConfig -Source PSSlack
 
