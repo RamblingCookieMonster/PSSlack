@@ -59,7 +59,7 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
             $Params = @{
                 Uri= $TestUri
                 Token = $TestToken
-                ArchiveUri = "$TestArchive"
+                ArchiveUri = $TestArchive
             }
             Set-PSSlackConfig @params
             $Config = Import-Clixml "$ModulePath\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
@@ -79,8 +79,8 @@ Describe "Set-PSSlackConfig PS$PSVersion" {
             Set-PSSlackConfig @params
             $Config = Import-Clixml $AlternativePath
 
-            $Config.Uri | Should BeOfType 'System.Security.SecureString'
-            $Config.Token | Should BeOfType 'System.Security.SecureString'
+            $Config.Uri | Should BeOfType System.Security.SecureString
+            $Config.Token | Should BeOfType System.Security.SecureString
             $Config.ArchiveUri | Should be 'TestArchivex'
         }
     }
