@@ -17,7 +17,7 @@ Import-Module $ModulePath -Force
 $TestUri = 'TestUri'
 $TestToken = 'TestToken'
 $TestArchive = 'TestArchive'
-$AlternativePath = 'C:\ThisSlackXml.xml'
+$AlternativePath = 'TestDrive:\ThisSlackXml.xml'
 
 Describe "PSSlack Module PS$PSVersion" {
     Context 'Strict mode' {
@@ -169,4 +169,3 @@ Describe "Send-SlackMessage PS$PSVersion" {
 }
 
 Remove-Item $ModulePath\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml -force -Confirm:$False
-Remove-Item $AlternativePath -Force -Confirm:$False
