@@ -193,7 +193,7 @@
     {
         foreach($Attachment in $Attachments)
         {
-            $AllAttachments += $Attachments
+            $AllAttachments += $Attachment
         }
     }
     End
