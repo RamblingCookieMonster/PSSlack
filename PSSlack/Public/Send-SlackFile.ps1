@@ -82,7 +82,7 @@
             'Channel'     {$body.channels = $Channel -join ", " }
             'FileName'    {$body.filename = $FileName}
             'Title'       {$body.Title = $Title}
-            'Comment'     {$body.comment = $Comment}
+            'Comment'     {$body.initial_comment = $Comment}
             'FileType'    {$body.filetype = $FileType}
             }
             Write-Verbose "Send-SlackApi -Body $($body | Format-List | Out-String)"
@@ -126,12 +126,11 @@
                             "$Title$LF")}
             'Comment'     {$bodyLines += 
                             ("--$boundary$LF" +
-                            "Content-Disposition: form-data; name=`"comment`"$LF" +
+                            "Content-Disposition: form-data; name=`"initial_comment`"$LF" +
                             "Content-Type: multipart/form-data$LF$LF" +
-                            "$Title$LF")}
+                            "$Comment$LF")}
             }
             $bodyLines += "--$boundary--$LF"
-            
             try {
                 $response = Invoke-RestMethod -Uri $uri -Method Post -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
             }
