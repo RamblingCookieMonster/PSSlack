@@ -16,6 +16,8 @@ Pull requests and other contributions would be welcome!
     # Download the repository
     # Unblock the zip
     # Extract the PSSlack folder to a module path (e.g. $env:USERPROFILE\Documents\WindowsPowerShell\Modules\)
+# Or, with PowerShell 5 or later or PowerShellGet:
+    Install-Module PSSlack
 
 # Import the module.
     Import-Module PSSlack    #Alternatively, Import-Module \\Path\To\PSSlack
@@ -212,4 +214,4 @@ Currently evaluating .NET Core / Cross-platform functionality.  The following wi
 
 There are a good number of Slack functions out there, including jgigler's [PowerShell.Slack](https://github.com/jgigler/Powershell.Slack) and Steven Murawski's [Slack](https://github.com/smurawski/Slack).  We borrowed some ideas and code from these - thank you!
 
-If you want to go beyond interacting with the Slack API, you might consider using a bot.  Matt Hodgkins has a [fantastic post](https://hodgkins.io/chatops-on-windows-with-hubot-and-powershell) on this topic.
+If you want to go beyond interacting with the Slack API, you might consider [using a bot](http://ramblingcookiemonster.github.io/PoshBot/#references)
