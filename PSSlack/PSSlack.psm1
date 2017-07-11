@@ -43,6 +43,7 @@ Foreach($import in @($Public + $Private))
                 Uri = $null
                 Token = $null
                 ArchiveUri = $null
+                Proxy = $null
             } | Export-Clixml -Path "$PSScriptRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml" -Force -ErrorAction Stop
         }
         Catch
