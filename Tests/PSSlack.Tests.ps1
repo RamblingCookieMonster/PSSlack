@@ -114,7 +114,7 @@ Describe "Get-PSSlackConfig PS$PSVersion" {
             $Config.Uri | Should Be 'TestUri'
             $Config.Token | Should Be 'TestToken'
             $Config.ArchiveUri | Should Be 'TestArchivex' #From running alternate path test before...
-            $Config.Proxy | Should Be 'TestProxy'
+            $Config.Proxy | Should Be 'TestProxyx' #From running alternate path test before...
     }
 
         It 'Should read a user-specified file' {
@@ -139,7 +139,7 @@ Describe "Get-PSSlackConfig PS$PSVersion" {
 }
 
 # Tests have passed, rely on set-psslackconfig...
-Set-PSSlackConfig -Uri $null -Token $null -ArchiveUri $null
+Set-PSSlackConfig -Uri $null -Token $null -ArchiveUri $null -Proxy $null
 
 
 Describe "Send-SlackMessage PS$PSVersion" {
