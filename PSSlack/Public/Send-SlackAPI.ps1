@@ -19,6 +19,10 @@ function Send-SlackApi
         Hash table of arguments to send to the Slack API.
 
     .PARAMETER Token
+        Slack token to use
+
+    .PARAMETER Proxy
+        Proxy server to use
 
     .FUNCTIONALITY
         Slack
@@ -29,11 +33,11 @@ function Send-SlackApi
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [string]$Method,
-        
+
         [Parameter()]
         [ValidateNotNullOrEmpty()]
         [hashtable]$Body = @{ },
-        
+
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript({
@@ -46,9 +50,17 @@ function Send-SlackApi
                 $true
             }
         })]
-        [string]$Token = $Script:PSSlack.Token
+        [string]$Token = $Script:PSSlack.Token,
+
+        [string]$Proxy = $Script:PSSlack.Proxy
     )
-    
+    $Params = @{
+        Uri = "https://slack.com/api/$Method"
+    }
+    if($Proxy)
+    {
+        $Params['Proxy'] = $Proxy
+    }
     $Body.token = $Token
-    Invoke-RestMethod -Uri "https://slack.com/api/$Method" -body $Body
+    Invoke-RestMethod @Params -body $Body
 }

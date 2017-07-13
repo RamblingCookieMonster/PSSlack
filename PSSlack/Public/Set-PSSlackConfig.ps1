@@ -28,6 +28,9 @@
 
         Used to generate a link to a specific archive URI, where appropriate
 
+    .PARAMETER Proxy
+        Proxy to use with Invoke-RESTMethod
+
     .PARAMETER Path
         If specified, save config file to this file path.  Defaults to PSSlack.xml in the module root.
 
@@ -39,14 +42,16 @@
         [string]$Uri,
         [string]$Token,
         [string]$ArchiveUri,
+        [string]$Proxy,
         [string]$Path = "$ModuleRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
     )
 
     Switch ($PSBoundParameters.Keys)
     {
-        'Uri'{ $Script:PSSlack.Uri = $Uri }
-        'Token'{ $Script:PSSlack.Token = $Token }
-        'ArchiveUri'{ $Script:PSSlack.ArchiveUri = $ArchiveUri }
+        'Uri'        { $Script:PSSlack.Uri = $Uri }
+        'Token'      { $Script:PSSlack.Token = $Token }
+        'ArchiveUri' { $Script:PSSlack.ArchiveUri = $ArchiveUri }
+        'Proxy'      { $Script:PSSlack.Proxy = $Proxy }
     }
 
     Function Encrypt {
@@ -59,9 +64,10 @@
 
     #Write the global variable and the xml
     $Script:PSSlack |
-        Select -Property ArchiveUri,
-                         @{l='Uri';e={Encrypt $_.Uri}},
-                         @{l='Token';e={Encrypt $_.Token}} |
+        Select-Object -Property ArchiveUri,
+                                @{l='Uri';e={Encrypt $_.Uri}},
+                                @{l='Token';e={Encrypt $_.Token}},
+                                Proxy |
         Export-Clixml -Path $Path -force
 
 }

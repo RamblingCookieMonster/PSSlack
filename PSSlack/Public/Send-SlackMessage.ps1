@@ -21,7 +21,12 @@ function Send-SlackMessage {
 
         Default value is the value set by Set-PSSlackConfig
 
-        If Token is set, this is ignored.
+        If Token is set, this is ignored
+
+    .PARAMETER Proxy
+        Proxy server to use
+
+        Default value is the value set by Set-PSSlackConfig
 
     .PARAMETER SlackMessage
         A SlackMessage created by New-SlackMessage
@@ -36,14 +41,14 @@ function Send-SlackMessage {
 
     .PARAMETER Username
         Set your bot's user name.
-        
+
         If using a Token, must be used in conjunction with as_user set to false, otherwise ignored
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
     .PARAMETER IconUrl
         URL to an image to use as the icon for this message.
-        
+
         If using a Token, must be used in conjunction with as_user set to false, otherwise ignored.
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
@@ -228,10 +233,14 @@ function Send-SlackMessage {
         [Parameter()]
         [ValidateNotNullOrEmpty()]
         [string]$Token = $Script:PSSlack.Token,
-        
+
         [Parameter()]
         [ValidateNotNullOrEmpty()]
         [string]$Uri = $Script:PSSlack.Uri,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]$Proxy = $Script:PSSlack.Proxy,
 
         [PSTypeName('PSSlack.Message')]
         [parameter(ParameterSetName = 'SlackMessage',
@@ -289,6 +298,11 @@ function Send-SlackMessage {
     {
         Write-Debug "Send-SlackMessage Bound parameters: $($PSBoundParameters | Out-String)`nParameterSetName $($PSCmdlet.ParameterSetName)"
         $Messages = @()
+        $ProxyParam = @{}
+        if($Proxy)
+        {
+            $ProxyParam.Proxy = $Proxy
+        }
     }
     process
     {
@@ -298,7 +312,7 @@ function Send-SlackMessage {
 
             switch ($psboundparameters.keys)
             {
-                'channel'     {$body.channel = $channel }    
+                'channel'     {$body.channel = $channel }
                 'text'        {$body.text     = $text}
                 'username'    {$body.username = $username}
                 'asuser'      {$body.as_user = $AsUser}
@@ -332,7 +346,7 @@ function Send-SlackMessage {
                 }
 
                 Write-Verbose "Send-SlackApi -Body $($Message | Format-List | Out-String)"
-                $response = Send-SlackApi -Method chat.postMessage -Body $Message -Token $Token
+                $response = Send-SlackApi @ProxyParam -Method chat.postMessage -Body $Message -Token $Token
 
                 if ($response.ok)
                 {
@@ -342,10 +356,10 @@ function Send-SlackMessage {
 
                 $response
             }
-            Elseif($Uri -or $Script:PSSlack.Uri)
+            elseif($Uri -or $Script:PSSlack.Uri)
             {
                 $json = ConvertTo-Json -Depth 4 -Compress -InputObject $Message
-                Invoke-RestMethod -Method Post -Body $json -Uri $Uri
+                Invoke-RestMethod @ProxyParam -Method Post -Body $json -Uri $Uri
             }
             else
             {

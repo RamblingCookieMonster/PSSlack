@@ -8,7 +8,7 @@
 
     .PARAMETER Source
         Get the config data from either...
-        
+
             PSSlack:     the live module variable used for command defaults
             PSSlack.xml: the serialized PSSlack.xml that loads when importing the module
 
@@ -16,7 +16,7 @@
 
     .PARAMETER Path
         If specified, read config from this XML file.
-        
+
         Defaults to PSSlack.xml in the module root
 
     .FUNCTIONALITY
@@ -32,7 +32,7 @@
         [parameter(ParameterSetName='source')]
         $Path = "$ModuleRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
     )
-    
+
     if($PSCmdlet.ParameterSetName -eq 'source' -and $Source -eq "PSSlack" -and -not $PSBoundParameters.ContainsKey('Path'))
     {
         $Script:PSSlack
@@ -49,9 +49,10 @@
             }
         }
         Import-Clixml -Path $Path |
-            Select -Property ArchiveUri,
-                         @{l='Uri';e={Decrypt $_.Uri}},
-                         @{l='Token';e={Decrypt $_.Token}}
+            Select-Object -Property ArchiveUri,
+                                    @{l='Uri';e={Decrypt $_.Uri}},
+                                    @{l='Token';e={Decrypt $_.Token}},
+                                    Proxy
     }
 
 }
