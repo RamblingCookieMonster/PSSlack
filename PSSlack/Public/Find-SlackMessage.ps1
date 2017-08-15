@@ -122,6 +122,7 @@
             }
 
         } until ( $ResponsePage -eq $ResponsePageCount -or
-                  $ResponsePage -eq $MaxPages)
+                  $ResponsePage -eq $MaxPages -or
+                  $ResponsePageCount -eq 0)
     }
 }
