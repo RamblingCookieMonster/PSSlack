@@ -32,7 +32,7 @@
         Proxy to use with Invoke-RESTMethod
 
     .PARAMETER Path
-        If specified, save config file to this file path.  Defaults to PSSlack.xml in the module root.
+        If specified, save config file to this file path.  Defaults to PSSlack.xml in the user temp folder.
 
     .FUNCTIONALITY
         Slack
@@ -43,7 +43,7 @@
         [string]$Token,
         [string]$ArchiveUri,
         [string]$Proxy,
-        [string]$Path = "$ModuleRoot\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
+        [string]$Path = "$env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
     )
 
     Switch ($PSBoundParameters.Keys)
