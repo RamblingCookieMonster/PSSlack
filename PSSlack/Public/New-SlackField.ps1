@@ -99,7 +99,7 @@
 
             if($IncludeProperty)
             {
-                $Properties = $Properties | Where {$IncludeProperty -contains $_}
+                $Properties = $Properties | Where-Object {$IncludeProperty -contains $_}
             }
 
             foreach($Property in $Properties)
