@@ -126,15 +126,15 @@
                     if($PageDirection -eq 'Forward')
                     {
 
-                        $ts = $response.messages.ts | sort | Select -last 1
+                        $ts = $response.messages.ts | Sort-Object | Select-Object -last 1
                         $Params.body.oldest = $ts
                         Write-Debug "Paging Forward.`n$(
                             [pscustomobject]@{
                                 After = $After
                                 Before = $Before
                                 LastTS = $response.messages[-1].ts
-                                SortLast = $response.messages.ts | sort | Select -last 1
-                                SortFirst = $response.messages.ts | sort | Select -first 1
+                                SortLast = $response.messages.ts | Sort-Object | Select-Object -last 1
+                                SortFirst = $response.messages.ts | Sort-Object | Select-Object -first 1
                                 ts = $ts
                             } | Out-String
                         )"
@@ -153,8 +153,8 @@
                                 After = $After
                                 Before = $Before
                                 LastTS = $response.messages[-1].ts
-                                SortLast = $response.messages.ts | sort | Select -last 1
-                                SortFirst = $response.messages.ts | sort | Select -first 1
+                                SortLast = $response.messages.ts | Sort-Object | Select-Object -last 1
+                                SortFirst = $response.messages.ts | Sort-Object | Select-Object -first 1
                                 ts = $ts
                             } | Out-String
                         )"
@@ -187,7 +187,7 @@
                         #Order our messages appropriately according to page direction
                         if($Paging -and $PageDirection -eq 'Forward')
                         {
-                            Parse-SlackMessage -InputObject $Response | Sort TimeStamp
+                            Parse-SlackMessage -InputObject $Response | Sort-Object TimeStamp
                         }
                         else
                         {

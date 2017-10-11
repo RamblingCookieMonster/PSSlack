@@ -65,7 +65,7 @@
             # torn between independent queries, or filtering groups.list
             # submit a PR if this isn't performant enough or doesn't make sense.
             $Groups = $RawGroups.groups |
-                Where {$Name -Contains $_.name}
+                Where-Object {$Name -Contains $_.name}
         }
         elseif ($Name -and$HasWildCard)
         {
