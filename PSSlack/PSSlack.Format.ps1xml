@@ -4,7 +4,7 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
-                <TypeName>PSSlack.SearchResult</TypeName>
+                <TypeName>PSSlack.Channel</TypeName>
             </ViewSelectedBy>
             <TableControl>
                 <TableHeaders>
@@ -12,7 +12,10 @@
                         <Width>20</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>20</Width>
+                        <Width>11</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>60</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
                         <Width>60</Width>
@@ -23,13 +26,16 @@
                         <Wrap />
                         <TableColumnItems>
                             <TableColumnItem>
-                                <PropertyName>Username</PropertyName>
+                                <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Channel</PropertyName>
+                                <PropertyName>MemberCount</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Text</PropertyName>
+                                <PropertyName>Topic</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Purpose</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
@@ -74,7 +80,7 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
-                <TypeName>PSSlack.Channel</TypeName>
+                <TypeName>PSSlack.SearchResult</TypeName>
             </ViewSelectedBy>
             <TableControl>
                 <TableHeaders>
@@ -82,10 +88,7 @@
                         <Width>20</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>11</Width>
-                    </TableColumnHeader>
-                    <TableColumnHeader>
-                        <Width>60</Width>
+                        <Width>20</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
                         <Width>60</Width>
@@ -96,23 +99,20 @@
                         <Wrap />
                         <TableColumnItems>
                             <TableColumnItem>
-                                <PropertyName>Name</PropertyName>
+                                <PropertyName>Username</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>MemberCount</PropertyName>
+                                <PropertyName>Channel</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Topic</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>Purpose</PropertyName>
+                                <PropertyName>Text</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
                 </TableRowEntries>
             </TableControl>
         </View>
-<View>
+        <View>
             <Name>Default</Name>
             <ViewSelectedBy>
                 <TypeName>PSSlack.User</TypeName>
