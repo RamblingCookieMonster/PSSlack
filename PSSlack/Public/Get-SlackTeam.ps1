@@ -17,7 +17,25 @@
     .EXAMPLE
         Get-SlackTeam
 
-    .FUNCTIONALITY
+        # Gets the default Slack team specified by Get-PSSlackConfig.
+
+    .EXAMPLE
+        Get-SlackTeam -Token $Token
+
+        # Gets the  Slack team specified by $Token.
+    .EXAMPLE
+        Get-SlackTeam -Raw
+
+        # Gets the default Slack team specified by Get-PSSlackConfig.
+        # Returns raw output.
+
+    .EXAMPLE
+        Get-SlackTeam -Raw -Token $Token
+
+        # Gets the  Slack team specified by $Token.
+        # Returns raw output.
+
+        .FUNCTIONALITY
         Slack
 
     .LINK
