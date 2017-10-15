@@ -1,4 +1,4 @@
-﻿# Parse users
+﻿# Parse teams
 Function Parse-SlackTeam {
     [CmdletBinding()]
     param( $InputObject )
