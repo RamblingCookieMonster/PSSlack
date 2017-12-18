@@ -44,6 +44,7 @@ Foreach($import in @($Public + $Private))
                 Token = $null
                 ArchiveUri = $null
                 Proxy = $null
+                MapUser = $null
             } | Export-Clixml -Path "$env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml" -Force -ErrorAction Stop
         }
         Catch
@@ -58,12 +59,16 @@ Foreach($import in @($Public + $Private))
         #Import the config
         $PSSlack = $null
         $PSSlack = Get-PSSlackConfig -Source PSSlack.xml -ErrorAction Stop
-
     }
     Catch
     {
         Write-Warning "Error importing PSSlack config: $_"
     }
+
+$_PSSlackUserMap = @{}
+if($PSSlack.MapUser){
+  $_PSSlackUserMap = Get-SlackUserMap
+}
 
 # Import some color defs.
 $_PSSlackColorMap = @{

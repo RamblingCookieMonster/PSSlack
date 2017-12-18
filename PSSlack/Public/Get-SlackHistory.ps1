@@ -61,14 +61,7 @@
     )
     begin
     {
-        function Get-UnixTime {
-            param($Date)
-            $unixEpochStart = new-object DateTime 1970,1,1,0,0,0,([DateTimeKind]::Utc)
-            [int]($Date.ToUniversalTime() - $unixEpochStart).TotalSeconds
-        }
-
         Write-Verbose "$($PSBoundParameters | Out-String)"
-
         $body = @{
             channel = $null
             count = $count

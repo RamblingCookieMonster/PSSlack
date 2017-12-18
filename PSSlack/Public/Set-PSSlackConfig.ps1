@@ -31,6 +31,9 @@
     .PARAMETER Proxy
         Proxy to use with Invoke-RESTMethod
 
+    .PARAMETER MapUser
+        Whether to generate a map of Slack user ID to name on module load, for use in Slack File commands
+
     .PARAMETER Path
         If specified, save config file to this file path.  Defaults to PSSlack.xml in the user temp folder.
 
@@ -43,6 +46,7 @@
         [string]$Token,
         [string]$ArchiveUri,
         [string]$Proxy,
+        [bool]$MapUser,
         [string]$Path = "$env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
     )
 

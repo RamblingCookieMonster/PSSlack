@@ -38,7 +38,6 @@ function Send-SlackApi
         [ValidateNotNullOrEmpty()]
         [hashtable]$Body = @{ },
 
-        [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [ValidateScript({
             if (-not $_ -and -not $Script:PSSlack.Token)
