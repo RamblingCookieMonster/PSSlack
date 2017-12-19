@@ -1,9 +1,9 @@
-﻿function Get-SlackFile {
+﻿function Get-SlackFileInfo {
     <#
     .SYNOPSIS
-        Get Slack files
+        Get Slack file info
     .DESCRIPTION
-        Get Slack files
+        Get Slack file info
     .PARAMETER Token
         Token to use for the Slack API
         Default value is the value set by Set-PSSlackConfig
@@ -33,19 +33,19 @@
     .PARAMETER MaxQueries
         Limit the count of API queries to this number.  Only used if you enable -Paging
     .EXAMPLE
-        Get-SlackFile
+        Get-SlackFileInfo
         # Lists up to 100 files
     .EXAMPLE
-        Get-SlackFile -Paging
+        Get-SlackFileInfo -Paging
         # Lists all files, querying 100 at a time
     .EXAMPLE
-        Get-SlackFile -User wframe -Type csv -Paging
+        Get-SlackFileInfo -User wframe -Type csv -Paging
         # Lists all CSV files uploaded by wframe
     .EXAMPLE
-        Get-SlackFile -User wframe -Channel C58AHBEPJ
+        Get-SlackFileInfo -User wframe -Channel C58AHBEPJ
         # Lists up to 100 files from channel C58AHBEPJ
     .EXAMPLE
-        Get-SlackFile -Before (Get-Date).AddDays(-7) -After (Get-Date).AddDays(-14) -Paging
+        Get-SlackFileInfo -Before (Get-Date).AddDays(-7) -After (Get-Date).AddDays(-14) -Paging
         # Get all files from a week ago
     .FUNCTIONALITY
         Slack

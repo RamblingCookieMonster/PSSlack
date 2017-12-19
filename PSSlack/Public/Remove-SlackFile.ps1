@@ -18,7 +18,7 @@
         Remove-SlackFile -id F18UVDLR3 -Force
         # Remove a specific file without prompts
     .EXAMPLE
-        Get-SlackFile -Before (Get-Date).AddYears(-1) | Remove-SlackFile -id F18UVDLR3
+        Get-SlackFileInfo -Before (Get-Date).AddYears(-1) | Remove-SlackFile -id F18UVDLR3
         # Remove files created over a year ago
     .FUNCTIONALITY
         Slack
