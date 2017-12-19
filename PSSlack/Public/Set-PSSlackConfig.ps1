@@ -56,6 +56,7 @@
         'Token'      { $Script:PSSlack.Token = $Token }
         'ArchiveUri' { $Script:PSSlack.ArchiveUri = $ArchiveUri }
         'Proxy'      { $Script:PSSlack.Proxy = $Proxy }
+        'MapUser'    { $Script:PSSlack.MapUser = $MapUser }
     }
 
     Function Encrypt {
@@ -71,7 +72,8 @@
         Select-Object -Property ArchiveUri,
                                 @{l='Uri';e={Encrypt $_.Uri}},
                                 @{l='Token';e={Encrypt $_.Token}},
-                                Proxy |
+                                Proxy,
+                                MapUser |
         Export-Clixml -Path $Path -force
 
 }

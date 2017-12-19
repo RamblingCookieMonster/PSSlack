@@ -67,7 +67,7 @@ Foreach($import in @($Public + $Private))
 
 $_PSSlackUserMap = @{}
 if($PSSlack.MapUser){
-  $_PSSlackUserMap = Get-SlackUserMap
+  $_PSSlackUserMap = Get-SlackUserMap -Update
 }
 
 # Import some color defs.

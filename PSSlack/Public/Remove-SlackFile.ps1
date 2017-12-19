@@ -12,6 +12,8 @@
         Remove file with this ID
     .PARAMETER Force
         If specified, override all prompts and delete file
+    .PARAMETER Raw
+        Return raw output
     .EXAMPLE
         Remove-SlackFile -id F18UVDLR3 -Force
         # Remove a specific file without prompts

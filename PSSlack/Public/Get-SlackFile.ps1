@@ -2,13 +2,10 @@
     <#
     .SYNOPSIS
         Get Slack files
-
     .DESCRIPTION
         Get Slack files
-
     .PARAMETER Token
         Token to use for the Slack API
-
         Default value is the value set by Set-PSSlackConfig
     .PARAMETER Channel
         If specified, search for files in this channel (ID)
@@ -18,7 +15,6 @@
         If specified, search for files created after this date
     .PARAMETER Types
         If specified, search for files of this type:
-
             all - All files
             spaces - Posts
             snippets - Snippets

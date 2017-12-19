@@ -22,7 +22,7 @@
         # Get map of names to IDs from cached PSSlack data
 
     .EXAMPLE
-        Get-SlackUserMap
+        Get-SlackUserMap -Update
         # Get map of names to IDs from Slack, and update cached PSSlack data
 
     .FUNCTIONALITY
