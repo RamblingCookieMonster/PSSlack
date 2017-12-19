@@ -17,7 +17,15 @@
     .PARAMETER After
         If specified, search for files created after this date
     .PARAMETER Types
-        If specified, search for files of this type
+        If specified, search for files of this type:
+
+            all - All files
+            spaces - Posts
+            snippets - Snippets
+            images - Image files
+            gdocs - Google docs
+            zips - Zip files
+            pdfs - PDF files
     .PARAMETER User
         If specified, search for files by this user
     .Parameter Raw
@@ -52,6 +60,7 @@
         [string]$Channel,
         [datetime]$Before,
         [datetime]$After,
+        [validateset('all','spaces','snippets','images','gdocs','zips','pdfs')]
         [string[]]$Types,
         [string]$User,
         [switch]$Paging,
