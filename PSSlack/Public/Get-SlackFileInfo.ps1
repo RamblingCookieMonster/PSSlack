@@ -21,6 +21,7 @@
             spaces - Posts
             snippets - Snippets
             images - Image files
+            videos - Video files
             gdocs - Google docs
             zips - Zip files
             pdfs - PDF files
@@ -58,7 +59,7 @@
         [string]$Channel,
         [datetime]$Before,
         [datetime]$After,
-        [validateset('all','spaces','snippets','images','gdocs','zips','pdfs')]
+        [validateset('all','spaces','snippets','images','videos','gdocs','zips','pdfs')]
         [string[]]$Types,
         [string]$User,
         [switch]$Paging,
