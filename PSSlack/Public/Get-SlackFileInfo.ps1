@@ -4,6 +4,8 @@
         Get Slack file info
     .DESCRIPTION
         Get Slack file info
+        
+        We query the first 100 files unless you specify -Paging
     .PARAMETER Token
         Token to use for the Slack API
         Default value is the value set by Set-PSSlackConfig
