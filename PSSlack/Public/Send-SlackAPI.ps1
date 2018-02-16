@@ -61,8 +61,8 @@ function Send-SlackApi
 
     # Create a "leaky bucket" for a given API token, indicating a counter of requests "in" the bucket and drip rate (per-second) that requests exit the bucket.
     # This is used to follow along with Slack's API rate-limiting algorithm.
-    If ($Script:PSSlack.APIRateBuckets[$Token] -eq $Null) {
-        $Script:PSSlack.APIRateBuckets[$Token] = @{
+    If ($Script:APIRateBuckets[$Token] -eq $Null) {
+        $Script:APIRateBuckets[$Token] = @{
             Counter = 0
             MaxCount = 25
             LeakRateMsec = 1000
@@ -81,7 +81,7 @@ function Send-SlackApi
     $Body.token = $Token
 
     # Update the bucket for this API key to "drain" it as necessary - even if we're not using a RLed API call in this instance.
-    $Bucket = $Script:PSSlack.APIRateBuckets[$Token]
+    $Bucket = $Script:APIRateBuckets[$Token]
 
     # If we should "drip" (non-zero counter, at least 1 drip period has elapsed)
     If ($Bucket.Counter -gt 0 -and ([DateTime]::Now - $Bucket.LastDrip).TotalMilliseconds -gt $Bucket.LeakRateMsec) {
