@@ -135,7 +135,7 @@ function Send-SlackApi
             $Bucket.Counter = $Bucket.MaxCount
             
             # Figure out when the last drip "should" have occurred, based on how many seconds we have until the next drip.
-            $Bucket.LastDrip = [DateTime]::Now.AddSeconds($RetryPeriod).AddMilliseconds($Bucket.LeakRateMsec * -1)
+            $Bucket.LastDrip = [DateTime]::Now.AddSeconds($RetryPeriod).AddMilliseconds($Bucket.LeakRateMsec * -1).AddMilliseconds(50)
 
             # Warn the user.
             Write-Warning "Slack API rate-limit exceeded - blocking for $RetryPeriod second(s)."
