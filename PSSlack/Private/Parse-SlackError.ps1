@@ -71,6 +71,11 @@ function Parse-SlackError {
                 Message = "The workspace token used in this request does not have the permissions necessary to complete the request."
 
             }
+
+            ratelimited = {
+                Message = "Slack API rate-limit exceeded."
+                RecommendedAction = "Try again in a few moments."
+            }
         }
     }
     
@@ -82,6 +87,12 @@ function Parse-SlackError {
         }
 
         $ErrorParams = $SlackErrorData[$ResponseObject.error]
+
+        If ($ErrorParams -eq $null) {
+            $ErrorParams = @{
+                Message = "Unknown error $($ResponseObject.error) received from Slack API."
+            }
+        }
         If ($Exception) {
             $ErrorParams.Exception = $Exception
         }
