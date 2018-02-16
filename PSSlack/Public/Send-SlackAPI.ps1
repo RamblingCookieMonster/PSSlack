@@ -155,6 +155,8 @@ function Send-SlackApi
     # (Responses with exception-generating status codes are handled in the "catch" block above - this one is for errors that don't generate exceptions)
     If ($Response -ne $null -and $Response.ok -eq $False) {
         $Response | Parse-SlackError
+    } Else {
+        Write-Output $Response
     }
 
     
