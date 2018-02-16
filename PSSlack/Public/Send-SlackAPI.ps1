@@ -25,7 +25,7 @@ function Send-SlackApi
         Proxy server to use
 
     .PARAMETER RateLimit
-        Indicates the API method is rate-limit and should use automatic back-off/retry upon receipt of a HTTP 429 (Too Many Requests) response from the server.
+        Indicates the API method is rate-limited and should automatically back-off/retry upon receipt of a HTTP 429 (Too Many Requests) response from the server.
 
     .FUNCTIONALITY
         Slack
