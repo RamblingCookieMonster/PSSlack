@@ -70,6 +70,10 @@ if($PSSlack.MapUser){
   $_PSSlackUserMap = Get-SlackUserMap -Update
 }
 
+# Create a hashtable for use with the "leaky bucket" rate-limiting algorithm. (Some of Slack's API calls will fail if you request them too quickly.)
+# https://en.wikipedia.org/wiki/Leaky_bucket
+$Script:PSSlack.APIRateBuckets = @{}
+
 # Import some color defs.
 $_PSSlackColorMap = @{
     aliceblue = "#F0F8FF"
