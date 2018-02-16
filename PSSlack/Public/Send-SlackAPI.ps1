@@ -102,7 +102,7 @@ function Send-SlackApi
                 
             # Determine when the next drip will occur.
             $NextDrip = $Bucket.LastDrip.AddMilliseconds($Bucket.LeakRateMsec)
-            Write-Warning "Rate-limit bucket full, waiting..."
+            Write-Verbose "Rate-limit bucket full, waiting..."
             
             # Sleep until then.
             Start-Sleep -Milliseconds ($NextDrip - [DateTime]::Now).TotalMilliseconds
@@ -138,7 +138,7 @@ function Send-SlackApi
             $Bucket.LastDrip = [DateTime]::Now.AddSeconds($RetryPeriod).AddMilliseconds($Bucket.LeakRateMsec * -1).AddMilliseconds(50)
 
             # Warn the user.
-            Write-Warning "Slack API rate-limit exceeded - blocking for $RetryPeriod second(s)."
+            Write-Verbose "Slack API rate-limit exceeded - blocking for $RetryPeriod second(s)."
             
             # (We don't actually have to sleep here, but rather recurse - the next call will handle sleeping.)
             Send-SlackApi @PSBoundParameters
