@@ -154,7 +154,7 @@ function Remove-SlackMessage {
                         [ref]$ConfirmAll,
                         [ref]$RejectAll
                 )) {
-                    Send-SlackApi @Params
+                    Send-SlackApi @Params -RateLimit
                 }    
             }
         }
