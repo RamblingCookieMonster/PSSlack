@@ -49,7 +49,7 @@ function Test-SlackApi {
             $Params.Token = $Token
         }
         Write-Verbose "Calling Slack API..."
-        $Response = Send-SlackApi @Params
+        $Response = Send-SlackApi @Params -ErrorAction Stop
 
         If ($Raw) {
             Return $Response
