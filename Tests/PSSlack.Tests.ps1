@@ -185,7 +185,7 @@ Describe "Test-SlackApi" {
         Set-StrictMode -Version latest
         It "Should receive API response" {
             $x = Test-SlackApi
-            $x.ok | Should Be $true
+            $x | Should Be $true
         }
         It "Should fail with invalid API keys" {
             {Test-SlackApi -Token "PSSlack_InvalidAPIToken"} | Should -Throw
