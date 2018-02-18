@@ -149,7 +149,7 @@ function Send-SlackApi
             $_.ErrorDetails.Message | ConvertFrom-Json | Parse-SlackError -Exception $_.Exception -ErrorAction Stop
             
         } Else {
-            Write-Error -Exception $_.Exception -Message "Slack API call failed:$_"
+            Write-Error -Exception $_.Exception -Message "Slack API call failed: $_"
         }
     }
 
