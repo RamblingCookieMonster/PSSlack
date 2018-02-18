@@ -180,4 +180,18 @@ Describe "Send-SlackMessage PS$PSVersion" {
     }
 }
 
+Describe "Test-SlackApi" {
+    Context "Strict Mode" {
+        Set-StrictMode -Version latest
+        It "Should receive API response" {
+            $x = Test-SlackApi
+            $x.ok | Should Be $true
+        }
+        It "Should fail with invalid API keys" {
+            {Test-SlackApi -Token "PSSlack_InvalidAPIToken"} | Should -Throw
+        }
+    }
+    
+}
+
 Remove-Item $env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml -force -Confirm:$False
