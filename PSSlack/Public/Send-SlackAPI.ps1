@@ -143,11 +143,13 @@ function Send-SlackApi
             # (We don't actually have to sleep here, but rather recurse - the next call will handle sleeping.)
             Send-SlackApi @PSBoundParameters
             
-        } Else {
+        } Elseif ($_.ErrorDetails.Message -ne $null) {
 
             # Convert the error-message to an object. (Invoke-RestMethod will not return data by-default if a 4xx/5xx status code is generated.)
             $_.ErrorDetails.Message | ConvertFrom-Json | Parse-SlackError -Exception $_.Exception -ErrorAction Stop
             
+        } Else {
+            Write-Error -Exception $_.Exception -Message "Slack API call failed: $_"
         }
     }
 
