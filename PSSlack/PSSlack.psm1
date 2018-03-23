@@ -44,6 +44,7 @@ Foreach($import in @($Public + $Private))
                 Token = $null
                 ArchiveUri = $null
                 Proxy = $null
+                MapUser = $null
             } | Export-Clixml -Path "$env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml" -Force -ErrorAction Stop
         }
         Catch
@@ -58,12 +59,20 @@ Foreach($import in @($Public + $Private))
         #Import the config
         $PSSlack = $null
         $PSSlack = Get-PSSlackConfig -Source PSSlack.xml -ErrorAction Stop
-
     }
     Catch
     {
         Write-Warning "Error importing PSSlack config: $_"
     }
+
+$_PSSlackUserMap = @{}
+if($PSSlack.MapUser){
+  $_PSSlackUserMap = Get-SlackUserMap -Update
+}
+
+# Create a hashtable for use with the "leaky bucket" rate-limiting algorithm. (Some of Slack's API calls will fail if you request them too quickly.)
+# https://en.wikipedia.org/wiki/Leaky_bucket
+$Script:APIRateBuckets = @{}
 
 # Import some color defs.
 $_PSSlackColorMap = @{

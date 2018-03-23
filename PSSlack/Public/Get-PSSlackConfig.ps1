@@ -52,7 +52,8 @@
             Select-Object -Property ArchiveUri,
                                     @{l='Uri';e={Decrypt $_.Uri}},
                                     @{l='Token';e={Decrypt $_.Token}},
-                                    Proxy
+                                    Proxy,
+                                    MapUser
     }
 
 }
