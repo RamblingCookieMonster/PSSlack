@@ -35,7 +35,7 @@
         Whether to generate a map of Slack user ID to name on module load, for use in Slack File commands
 
     .PARAMETER Path
-        If specified, save config file to this file path.  Defaults to PSSlack.xml in the user temp folder.
+        If specified, save config file to this file path.  Defaults to PSSlack.xml in the user temp folder on Windows, or .psslack in the user's home directory on Linux/macOS.
 
     .FUNCTIONALITY
         Slack
@@ -47,7 +47,7 @@
         [string]$ArchiveUri,
         [string]$Proxy,
         [bool]$MapUser,
-        [string]$Path = "$env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
+        [string]$Path = $script:_PSSlackXmlpath
     )
 
     Switch ($PSBoundParameters.Keys)
