@@ -88,69 +88,128 @@
             Write-Verbose "Send-SlackApi -Body $($body | Format-List | Out-String)"
             $response = Send-SlackApi -Method files.upload -Body $body -Token $Token
         } else {
+
             $fileName = (Split-Path -Path $Path -Leaf)
             $uri = 'https://slack.com/api/files.upload'
 
-            $multipartContent = [System.Net.Http.MultipartFormDataContent]::new()
+            if ($IsCoreCLR) {
+                # PowerShell Core implementation
 
-            # Add file contents
-            $fileHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
-            $fileHeader.Name = 'file'
-            $fileHeader.FileName = $FileName
-            $fileStream = [System.IO.FileStream]::new($Path, [System.IO.FileMode]::Open)
-            $fileContent = [System.Net.Http.StreamContent]::new($fileStream)
-            $fileContent.Headers.ContentDisposition = $fileHeader
-            $fileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::Parse('multipart/form-data')
-            $multipartContent.Add($fileContent)
+                $multipartContent = [System.Net.Http.MultipartFormDataContent]::new()
 
-            # Add token
-            $tokenHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
-            $tokenHeader.Name = 'token'
-            $tokenContent = [System.Net.Http.StringContent]::new($token)
-            $tokenContent.Headers.ContentDisposition = $tokenHeader
-            $multipartContent.Add($tokenContent)
+                # Add file contents
+                $fileHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+                $fileHeader.Name = 'file'
+                $fileHeader.FileName = $FileName
+                $fileStream = [System.IO.FileStream]::new($Path, [System.IO.FileMode]::Open)
+                $fileContent = [System.Net.Http.StreamContent]::new($fileStream)
+                $fileContent.Headers.ContentDisposition = $fileHeader
+                $fileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::Parse('multipart/form-data')
+                $multipartContent.Add($fileContent)
 
-            switch ($psboundparameters.keys) {
-                'Channel' {
-                    # Add channel
-                    $channelHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
-                    $channelHeader.Name = 'channels'
-                    $channelContent = [System.Net.Http.StringContent]::new(($Channel -join ', '))
-                    $channelContent.Headers.ContentDisposition = $channelHeader
-                    $multipartContent.Add($channelContent)
+                # Add token
+                $tokenHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+                $tokenHeader.Name = 'token'
+                $tokenContent = [System.Net.Http.StringContent]::new($token)
+                $tokenContent.Headers.ContentDisposition = $tokenHeader
+                $multipartContent.Add($tokenContent)
+
+                switch ($psboundparameters.keys) {
+                    'Channel' {
+                        # Add channel
+                        $channelHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+                        $channelHeader.Name = 'channels'
+                        $channelContent = [System.Net.Http.StringContent]::new(($Channel -join ', '))
+                        $channelContent.Headers.ContentDisposition = $channelHeader
+                        $multipartContent.Add($channelContent)
+                    }
+                    'FileName' {
+                        # Add file name
+                        $filenameHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+                        $filenameHeader.Name = 'filename'
+                        $filenameContent = [System.Net.Http.StringContent]::new($FileName)
+                        $filenameContent.Headers.ContentDisposition = $filenameHeader
+                        $multipartContent.Add($filenameContent)
+                    }
+                    'Title' {
+                        # Add title
+                        $titleHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+                        $titleHeader.Name = 'title'
+                        $titleContent = [System.Net.Http.StringContent]::new($Title)
+                        $titleContent.Headers.ContentDisposition = $titleHeader
+                        $multipartContent.Add($titleContent)
+                    }
+                    'Comment' {
+                        # Add comment
+                        $commentHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+                        $commentHeader.Name = 'initial_comment'
+                        $commentContent = [System.Net.Http.StringContent]::new($Comment)
+                        $commentContent.Headers.ContentDisposition = $commentHeader
+                        $multipartContent.Add($commentContent)
+                    }
                 }
-                'FileName' {
-                    # Add file name
-                    $filenameHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
-                    $filenameHeader.Name = 'filename'
-                    $filenameContent = [System.Net.Http.StringContent]::new($FileName)
-                    $filenameContent.Headers.ContentDisposition = $filenameHeader
-                    $multipartContent.Add($filenameContent)
+
+                try {
+                    $response = Invoke-RestMethod -Uri $uri -Method Post -Body $multipartContent
                 }
-                'Title' {
-                    # Add title
-                    $titleHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
-                    $titleHeader.Name = 'title'
-                    $titleContent = [System.Net.Http.StringContent]::new($Title)
-                    $titleContent.Headers.ContentDisposition = $titleHeader
-                    $multipartContent.Add($titleContent)
+                catch [System.Net.WebException] {
+                    Write-Error( "Rest call failed for $uri`: $_" )
+                    throw $_
                 }
-                'Comment' {
-                    # Add comment
-                    $commentHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
-                    $commentHeader.Name = 'initial_comment'
-                    $commentContent = [System.Net.Http.StringContent]::new($Comment)
-                    $commentContent.Headers.ContentDisposition = $commentHeader
-                    $multipartContent.Add($commentContent)
+                finally {
+                    $fileStream.Close()
                 }
             }
+            else {
+                # Legacy Windows PowerShell implementation
 
-            try {
-                $response = Invoke-RestMethod -Uri $uri -Method Post -Body $multipartContent
-            }
-            catch [System.Net.WebException] {
-                Write-Error( "Rest call failed for $uri`: $_" )
-                throw $_
+                $LF = "`r`n"
+                $readFile = [System.IO.File]::ReadAllBytes($Path)
+                $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")
+                $fileEnc = $enc.GetString($readFile)
+                $boundary = [System.Guid]::NewGuid().ToString()
+
+                $bodyLines =
+                    "--$boundary$LF" +
+                    "Content-Disposition: form-data; name=`"file`"; filename=`"$fileName`"$LF" +
+                    "Content-Type: 'multipart/form-data'$LF$LF" +
+                    "$fileEnc$LF" +
+                    "--$boundary$LF" +
+                    "Content-Disposition: form-data; name=`"token`"$LF" +
+                    "Content-Type: 'multipart/form-data'$LF$LF" +
+                    "$token$LF"
+
+
+                switch ($psboundparameters.keys) {
+                'Channel'     {$bodyLines +=
+                                ("--$boundary$LF" +
+                                "Content-Disposition: form-data; name=`"channels`"$LF" +
+                                "Content-Type: multipart/form-data$LF$LF" +
+                                ($Channel -join ", ") + $LF)}
+                'FileName'    {$bodyLines +=
+                                ("--$boundary$LF" +
+                                "Content-Disposition: form-data; name=`"filename`"$LF" +
+                                "Content-Type: multipart/form-data$LF$LF" +
+                                "$FileName$LF")}
+                'Title'       {$bodyLines +=
+                                ("--$boundary$LF" +
+                                "Content-Disposition: form-data; name=`"title`"$LF" +
+                                "Content-Type: multipart/form-data$LF$LF" +
+                                "$Title$LF")}
+                'Comment'     {$bodyLines +=
+                                ("--$boundary$LF" +
+                                "Content-Disposition: form-data; name=`"initial_comment`"$LF" +
+                                "Content-Type: multipart/form-data$LF$LF" +
+                                "$Comment$LF")}
+                }
+                $bodyLines += "--$boundary--$LF"
+                try {
+                    $response = Invoke-RestMethod -Uri $uri -Method Post -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
+                }
+                catch [System.Net.WebException] {
+                    Write-Error( "Rest call failed for $uri`: $_" )
+                    throw $_
+                }
             }
         }
         $response
