@@ -25,22 +25,23 @@ Foreach($import in @($Public + $Private))
 }
 
 #Create / Read config
-    if(-not (Test-Path -Path "$env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml" -ErrorAction SilentlyContinue))
+    $script:_PSSlackXmlpath = Get-PSSlackConfigPath
+    if(-not (Test-Path -Path $script:_PSSlackXmlpath -ErrorAction SilentlyContinue))
     {
         Try
         {
-            Write-Warning "Did not find config file $env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml, attempting to create"
+            Write-Warning "Did not find config file $($script:_PSSlackXmlpath), attempting to create"
             [pscustomobject]@{
                 Uri = $null
                 Token = $null
                 ArchiveUri = $null
                 Proxy = $null
                 MapUser = $null
-            } | Export-Clixml -Path "$env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml" -Force -ErrorAction Stop
+            } | Export-Clixml -Path $($script:_PSSlackXmlpath) -Force -ErrorAction Stop
         }
         Catch
         {
-            Write-Warning "Failed to create config file $env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml: $_"
+            Write-Warning "Failed to create config file $($script:_PSSlackXmlpath): $_"
         }
     }
 

@@ -17,7 +17,7 @@
     .PARAMETER Path
         If specified, read config from this XML file.
 
-        Defaults to PSSlack.xml in the user temp folder
+        Defaults to PSSlack.xml in the user temp folder on Windows, or .psslack in the user's home directory on Linux/macOS.
 
     .FUNCTIONALITY
         Slack
@@ -30,7 +30,7 @@
 
         [parameter(ParameterSetName='path')]
         [parameter(ParameterSetName='source')]
-        $Path = "$env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml"
+        $Path = $script:_PSSlackXmlpath
     )
 
     if($PSCmdlet.ParameterSetName -eq 'source' -and $Source -eq "PSSlack" -and -not $PSBoundParameters.ContainsKey('Path'))
