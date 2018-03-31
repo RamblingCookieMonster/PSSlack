@@ -3,22 +3,13 @@
     $Private = @( Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 -ErrorAction SilentlyContinue )
     $ModuleRoot = $PSScriptRoot
 
-if(-not $IsCoreCLR)
-{
-    # Import System.Drawing Assembly
+# Import System.Drawing Assembly
     Try {
         Add-Type -Assembly System.Drawing
     }
     Catch {
         Write-Error -Message "Failed to import System.Drawing assembly: $_"
     }
-}
-else
-{
-   Write-Warning ("You are using PSSlack in with .NET Core.  Several features will not work:",
-                  "Set-PSSlackConfig cannot serialize tokens or URIs",
-                  "[System.Drawing.Color]::SOmeColor shortcut is not available" -join "`n`t")
-}
 
 #Dot source the files
 Foreach($import in @($Public + $Private))

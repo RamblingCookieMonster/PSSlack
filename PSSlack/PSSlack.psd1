@@ -4,7 +4,7 @@
 RootModule = 'PSSlack.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.15'
+ModuleVersion = '0.0.32'
 
 # ID used to uniquely identify this module
 GUID = 'fb0a1f73-e16c-4829-b2a7-4fc8d7bed545'
@@ -16,7 +16,7 @@ Author = 'Warren F.'
 #CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = '(c) 2016 Warren F. All rights reserved.'
+Copyright = '(c) 2018 Warren F. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'PowerShell module for the Slack API'
