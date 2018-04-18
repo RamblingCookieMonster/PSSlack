@@ -96,7 +96,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = 'Prevent Set-PSSlackConfig from trying (and failing) to serialize secrets to disk'
 
     } # End of PSData hashtable
 

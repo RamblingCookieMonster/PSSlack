@@ -10,18 +10,18 @@
 
         If a command takes either a token or a uri, tokens take precedence.
 
-        WARNING: Use this to store the token or uri on a filesystem at your own risk.
-                 We use the DPAPI to store this.
+        WARNING: Use this to store the token or uri on a filesystem at your own risk
+                 Only supported on Windows systems, via the DPAPI
 
     .PARAMETER Token
         Specify a Token to use
 
-        Encrypted with the DPAPI
+        Only serialized to disk on Windows, via DPAPI
 
     .PARAMETER Uri
         Specify a Uri to use
 
-        Encrypted with the DPAPI
+        Only serialized to disk on Windows, via DPAPI
 
     .PARAMETER ArchiveUri
         Archive URI. Generally, https://<TEAMNAME>.slack.com/archives/
@@ -61,7 +61,7 @@
 
     Function Encrypt {
         param([string]$string)
-        if($String -notlike '')
+        if($String -notlike '' -and (Test-IsWindows))
         {
             ConvertTo-SecureString -String $string -AsPlainText -Force
         }
