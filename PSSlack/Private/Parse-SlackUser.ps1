@@ -5,11 +5,11 @@ Function Parse-SlackUser {
 
     foreach($User in $InputObject)
     {
-
         [pscustomobject]@{
             PSTypeName = 'PSSlack.User'
             ID = $User.id
             Name = $User.name
+            DisplayName = $User.Profile.Display_Name
             RealName = $User.Profile.Real_Name
             FirstName = $User.Profile.First_Name
             Last_Name = $User.Profile.Last_Name
@@ -22,10 +22,12 @@ Function Parse-SlackUser {
             IsPrimaryOwner = $User.Is_Primary_Owner
             IsRestricted = $User.Is_Restricted
             IsUltraRestricted = $User.Is_Ultra_Restricted
-            Status = $User.Status
+            StatusText = $User.Profile.Status_Text
+            StatusEmoji = $User.Profile.Status_Emoji
             TimeZoneLabel = $User.tz_label
             TimeZone = $User.tz
             Presence = $User.Presence
+            Updated = ConvertFrom-UnixTime $User.updated
             Deleted = $User.Deleted
             Raw = $User
         }
