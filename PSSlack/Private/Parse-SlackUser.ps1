@@ -27,6 +27,7 @@ Function Parse-SlackUser {
             TimeZoneLabel = $User.tz_label
             TimeZone = $User.tz
             Presence = $User.Presence
+            BillingActive = $User.BillingActive
             Updated = ConvertFrom-UnixTime $User.updated
             Deleted = $User.Deleted
             Raw = $User
