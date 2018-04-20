@@ -96,7 +96,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Update properties returned by Get-SlackUser'
+        ReleaseNotes = 'Add option to retrieve billing info with Get-SlackUser'
 
     } # End of PSData hashtable
 

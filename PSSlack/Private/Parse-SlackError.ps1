@@ -15,8 +15,14 @@ function Parse-SlackError {
     Begin {
         $SlackErrorData = @{
             # Messages are adapted from Slack API documentation
+
+            missing_scope = @{
+                Message = "The method requires a scope that your token is missing.  For example, a user might need to be in the admin scope"
+                RecommendedAction = "Review the API method documentation (https://api.slack.com/methods), these generally list valid scopes (https://api.slack.com/scopes)"
+            }
+
             invalid_arg_name = @{
-                Message = "The method was passed an argument whose name falls outside the bounds of accepted or expected values. This includes very long names and names with non-alphanumeric characters other than _." 
+                Message = "The method was passed an argument whose name falls outside the bounds of accepted or expected values. This includes very long names and names with non-alphanumeric characters other than _."
                 RecommendedAction = "Verify API call is well-formed."
             }
 
@@ -78,12 +84,12 @@ function Parse-SlackError {
             }
         }
     }
-    
+
     process {
         If ($ResponseObject.ok) {
             # We weren't actually given an error in this case
             Write-Debug "Parse-SlackError: Received non-error response, skipping."
-            return 
+            return
         }
 
         $ErrorParams = $SlackErrorData[$ResponseObject.error]
@@ -99,7 +105,7 @@ function Parse-SlackError {
 
         Write-Error -ErrorId $ResponseObject.error @ErrorParams
     }
-    
+
     end {
     }
 }
