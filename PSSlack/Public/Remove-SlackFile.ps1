@@ -18,7 +18,7 @@
         Remove-SlackFile -id F18UVDLR3 -Force
         # Remove a specific file without prompts
     .EXAMPLE
-        Get-SlackFileInfo -Before (Get-Date).AddYears(-1) | Remove-SlackFile -id F18UVDLR3
+        Get-SlackFileInfo -Before (Get-Date).AddYears(-1) | Remove-SlackFile
         # Remove files created over a year ago
     .FUNCTIONALITY
         Slack
@@ -56,6 +56,7 @@
                                                        "Removing [$FileID]",
                                                        [ref]$ConfirmAll,
                                                        [ref]$RejectAll)) {
+                    $Response = $null
                     $Response = Send-SlackApi @params
                     if($Raw)
                     {
@@ -76,7 +77,7 @@
                             ok = $false
                             Error = $Response.error
                             Raw = $Response
-                        }                        
+                        }
                     }
                 }
             }
