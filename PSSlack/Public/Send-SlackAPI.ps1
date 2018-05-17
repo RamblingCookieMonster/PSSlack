@@ -66,7 +66,7 @@ function Send-SlackApi
         $Response = $null
         $Response = Invoke-RestMethod @Params -Body $Body
     }
-    catch [System.Net.WebException], [Microsoft.PowerShell.Commands.HttpResponseException] {
+    catch {
         # (HTTP 429 is "Too Many Requests")
         if ($_.Exception.Response.StatusCode -eq 429) {
 
@@ -93,9 +93,6 @@ function Send-SlackApi
         else {
             Write-Error -Exception $_.Exception -Message "Slack API call failed: $_"
         }
-    }
-    catch {
-        Write-Error $_
     }
 
     # Check to see if we have confirmation that our API call failed.
