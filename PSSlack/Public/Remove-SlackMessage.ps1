@@ -8,12 +8,12 @@ function Remove-SlackMessage {
         # Remove a message sent to a channel with ID C1W2X3Y4Z at Saturday, August 5, 2017 8:19:05 PM
         PS> Remove-SlackMessage -ChannelID "C1W2X3Y4Z" -TimeStamp 1501964345.000481
 
-        # Using a pipeline, Remove all messages sent to a channel by a specific bot/user 
+        # Using a pipeline, Remove all messages sent to a channel by a specific bot/user
         # (Multilined for clarity)
         PS> Get-SlackChannel -name "TargetChannel" |
-                Get-SlackHistory -Count 1000 | 
+                Get-SlackHistory -Count 1000 |
                 Where-Object Username -match "MalfunctioningBot" |
-                Remove-SlackMessage -ChannelID "C5H8XBUMV"       
+                Remove-SlackMessage -ChannelID "C5H8XBUMV"
     .INPUTS
         The message(s) to delete. These can be specified individually using their timestamps, or piped in from Get-SlackHistory or Find-SlackMessage.
     .OUTPUTS
@@ -27,8 +27,8 @@ function Remove-SlackMessage {
     .PARAMETER SearchResultObject
         A PSSlack.SearchResult object returned from Find-SlackMessage. This is intended for use in pipelined scenarios.
     .PARAMETER AsUser
-        Delete the message as the authed user associated with this request's token, using the "chat:write:user" scope. Bot users in this context are considered authed users. 
-        
+        Delete the message as the authed user associated with this request's token, using the "chat:write:user" scope. Bot users in this context are considered authed users.
+
         If not specified, the message will be deleted with the "chat:write:bot" scope.
     .PARAMETER Token
         The Slack API Token to use for authorizing this request.
@@ -100,15 +100,13 @@ function Remove-SlackMessage {
 
         [string]$Token = $Script:PSSlack.Token
     )
-    
+
     begin {
         Write-Verbose "$($PSBoundParameters | Out-String)"
         $RejectAll = $false
         $ConfirmAll = $false
-
-
     }
-    
+
     process {
 
         switch ($PSCmdlet.ParameterSetName) {
@@ -144,7 +142,7 @@ function Remove-SlackMessage {
                 $PSCmdlet.ShouldProcess(
                     "Removed the message [$($Body.ts)] from channel $($Body.channel)",
                     "Remove the message [$($Body.ts)] from channel $($Body.channel)?",
-                    "Removing messages" 
+                    "Removing messages"
             )) {
                 If (($Force -and -not $WhatIfPreference) -or
                     $PSCmdlet.ShouldContinue(
@@ -154,8 +152,8 @@ function Remove-SlackMessage {
                         [ref]$ConfirmAll,
                         [ref]$RejectAll
                 )) {
-                    Send-SlackApi @Params -RateLimit
-                }    
+                    Send-SlackApi @Params
+                }
             }
         }
     }
