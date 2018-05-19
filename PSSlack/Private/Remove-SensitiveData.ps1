@@ -2,7 +2,7 @@ function Remove-SensitiveData {
     param (
         [parameter(ValueFromPipeline = $True)]
         $InputObject,
-        $SensitiveProperties = @('SlackUri', 'Token'),
+        $SensitiveProperties = @('Uri', 'Token'),
         $ForceVerbose = $Script:PSSlack.ForceVerbose
     )
     process {
