@@ -33,7 +33,7 @@
     )
     end
     {
-        Write-Verbose "$($PSBoundParameters | Out-String)"
+        Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
 
         if($ExcludeArchived)
         {
@@ -61,7 +61,7 @@
         }
 
         if($Name -and -not $HasWildCard)
-        {       
+        {
             # torn between independent queries, or filtering channels.list
             # submit a PR if this isn't performant enough or doesn't make sense.
             $Channels = $RawChannels.channels |
@@ -70,7 +70,7 @@
         elseif ($Name -and$HasWildCard)
         {
             $AllChannels = $RawChannels.Channels
-            
+
             # allow like operator on each channel requested in the param, avoid dupes
             $ChannelHash = [ordered]@{}
             foreach($SlackChannel in $AllChannels)

@@ -36,7 +36,7 @@ function Get-SlackUserGroup {
     )
     begin
     {
-        Write-Verbose "$($PSBoundParameters | Out-String)"
+        Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
         $body = @{}
         if($IncludeUsers) {
             $body.add('include_users',$true)

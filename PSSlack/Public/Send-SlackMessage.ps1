@@ -87,6 +87,12 @@ function Send-SlackMessage {
 
         See attachments spec https://api.slack.com/docs/attachments
 
+    .PARAMETER ForceVerbose
+        If specified, don't explicitly remove verbose output from Invoke-RestMethod
+
+        *** WARNING ***
+        This will expose your token in verbose output
+
     .EXAMPLE
         # This example shows a crudely crafted message without any attachments,
         # using parameters from Send-SlackMessage to construct the message.
@@ -292,11 +298,13 @@ function Send-SlackMessage {
         [parameter(ParameterSetName = 'Param',
                    ValueFromPipelineByPropertyName = $True)]
         [PSTypeName('PSSlack.MessageAttachment')]
-        [System.Collections.Hashtable[]]$Attachments
+        [System.Collections.Hashtable[]]$Attachments,
+
+        [switch]$ForceVerbose = $Script:PSSlack.ForceVerbose
     )
     begin
     {
-        Write-Debug "Send-SlackMessage Bound parameters: $($PSBoundParameters | Out-String)`nParameterSetName $($PSCmdlet.ParameterSetName)"
+        Write-Debug "Send-SlackMessage Bound parameters: $($PSBoundParameters | Remove-SensitiveData | Out-String)`nParameterSetName $($PSCmdlet.ParameterSetName)"
         $Messages = @()
         $ProxyParam = @{}
         if($Proxy)
@@ -346,7 +354,7 @@ function Send-SlackMessage {
                 }
 
                 Write-Verbose "Send-SlackApi -Body $($Message | Format-List | Out-String)"
-                $response = Send-SlackApi @ProxyParam -Method chat.postMessage -Body $Message -Token $Token
+                $response = Send-SlackApi @ProxyParam -Method chat.postMessage -Body $Message -Token $Token -ForceVerbose:$ForceVerbose
 
                 if ($response.ok)
                 {
@@ -358,6 +366,12 @@ function Send-SlackMessage {
             }
             elseif($Uri -or $Script:PSSlack.Uri)
             {
+                if(-not $ForceVerbose) {
+                    $ProxyParam.Add('Verbose', $False)
+                }
+                if($ForceVerbose) {
+                    $ProxyParam.Add('Verbose', $true)
+                }
                 $json = ConvertTo-Json -Depth 4 -Compress -InputObject $Message
                 Invoke-RestMethod @ProxyParam -Method Post -Body $json -Uri $Uri
             }

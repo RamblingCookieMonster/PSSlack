@@ -31,6 +31,12 @@
     .PARAMETER Comment
         Optional initial comment for the file
 
+    .PARAMETER ForceVerbose
+        If specified, don't explicitly remove verbose output from Invoke-RestMethod
+
+        *** WARNING ***
+        This will expose your token in verbose output
+
     .EXAMPLE
         Send-SlackFile -Token $Token `
                        -Channel general `
@@ -71,7 +77,9 @@
         [string[]]$Channel,
         [string]$FileName,
         [String]$Title,
-        [String]$Comment
+        [String]$Comment,
+
+        [switch]$ForceVerbose = $Script:PSSlack.ForceVerbose
     )
     process
     {
@@ -204,7 +212,19 @@
                 }
                 $bodyLines += "--$boundary--$LF"
                 try {
-                    $response = Invoke-RestMethod -Uri $uri -Method Post -ContentType "multipart/form-data; boundary=`"$boundary`"" -Body $bodyLines
+                    $Params = @{
+                        Uri = $uri
+                        Method = 'Post'
+                        ContentType = "multipart/form-data; boundary=`"$boundary`""
+                        Body = $bodyLines
+                    }
+                    if(-not $ForceVerbose) {
+                        $Params.Add('Verbose', $False)
+                    }
+                    if($ForceVerbose) {
+                        $Params.Add('Verbose', $true)
+                    }
+                    $response = Invoke-RestMethod @Params
                 }
                 catch [System.Net.WebException] {
                     Write-Error( "Rest call failed for $uri`: $_" )

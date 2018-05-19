@@ -4,7 +4,7 @@
         Get Slack file info
     .DESCRIPTION
         Get Slack file info
-        
+
         We query the first 100 files unless you specify -Paging
     .PARAMETER Token
         Token to use for the Slack API
@@ -70,7 +70,7 @@
     )
     begin
     {
-        Write-Verbose "$($PSBoundParameters | Out-String)"
+        Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
         $body = @{
             count = $count
         }
@@ -149,10 +149,10 @@
                 }
                 else
                 {
-                    Parse-SlackFile -InputObject $Response 
+                    Parse-SlackFile -InputObject $Response
                 }
             }
-            else 
+            else
             {
                 $response
             }

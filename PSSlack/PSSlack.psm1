@@ -37,6 +37,7 @@ Foreach($import in @($Public + $Private))
                 ArchiveUri = $null
                 Proxy = $null
                 MapUser = $null
+                ForceVerbose = $False
             } | Export-Clixml -Path $($script:_PSSlackXmlpath) -Force -ErrorAction Stop
         }
         Catch
