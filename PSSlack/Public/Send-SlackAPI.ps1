@@ -24,6 +24,12 @@ function Send-SlackApi
     .PARAMETER Proxy
         Proxy server to use
 
+    .PARAMETER ForceVerbose
+        If specified, don't explicitly remove verbose output from Invoke-RestMethod
+
+        *** WARNING ***
+        This will expose your token in verbose output
+
     .FUNCTIONALITY
         Slack
     #>
@@ -51,7 +57,9 @@ function Send-SlackApi
         })]
         [string]$Token = $Script:PSSlack.Token,
 
-        [string]$Proxy = $Script:PSSlack.Proxy
+        [string]$Proxy = $Script:PSSlack.Proxy,
+
+        [switch]$ForceVerbose = $Script:PSSlack.ForceVerbose
     )
     $Params = @{
         Uri = "https://slack.com/api/$Method"
@@ -59,6 +67,12 @@ function Send-SlackApi
     }
     if($Proxy) {
         $Params['Proxy'] = $Proxy
+    }
+    if(-not $ForceVerbose) {
+        $Params.Add('Verbose', $False)
+    }
+    if($ForceVerbose) {
+        $Params.Add('Verbose', $true)
     }
     $Body.token = $Token
 

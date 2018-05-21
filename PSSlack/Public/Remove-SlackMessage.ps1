@@ -102,7 +102,7 @@ function Remove-SlackMessage {
     )
 
     begin {
-        Write-Verbose "$($PSBoundParameters | Out-String)"
+        Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
         $RejectAll = $false
         $ConfirmAll = $false
     }

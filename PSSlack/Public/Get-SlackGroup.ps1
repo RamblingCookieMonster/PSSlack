@@ -33,7 +33,7 @@
     )
     end
     {
-        Write-Verbose "$($PSBoundParameters | Out-String)"
+        Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
 
         if($ExcludeArchived)
         {
@@ -61,7 +61,7 @@
         }
 
         if($Name -and -not $HasWildCard)
-        {       
+        {
             # torn between independent queries, or filtering groups.list
             # submit a PR if this isn't performant enough or doesn't make sense.
             $Groups = $RawGroups.groups |
@@ -70,7 +70,7 @@
         elseif ($Name -and$HasWildCard)
         {
             $AllGroups = $RawGroups.groups
-            
+
             # allow like operator on each group requested in the param, avoid dupes
             $GroupHash = [ordered]@{}
             foreach($SlackGroup in $AllGroups)

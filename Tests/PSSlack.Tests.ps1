@@ -170,7 +170,8 @@ Describe "Send-SlackMessage PS$PSVersion" {
 
         It 'Should not pass parameters if not specified' {
             $x = Send-SlackMessage -Token Token -Text 'Hi'
-            $x.arg.count | Should Be 6
+            # 6 we see here, 2 are from ForceVerbose resulting in Verbose $False...
+            $x.arg.count | Should Be 8
             $x.arg -contains '-Body:' | Should Be $True
             $x.arg -contains '-Method:' | Should Be $True
             $x.arg -contains '-Token:' | Should Be $True
@@ -191,7 +192,7 @@ Describe "Test-SlackApi" {
             {Test-SlackApi -Token "PSSlack_InvalidAPIToken"} | Should -Throw
         }
     }
-    
+
 }
 
 Remove-Item $env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml -force -Confirm:$False

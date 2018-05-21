@@ -53,7 +53,8 @@
                                     @{l='Uri';e={Decrypt $_.Uri}},
                                     @{l='Token';e={Decrypt $_.Token}},
                                     Proxy,
-                                    MapUser
+                                    MapUser,
+                                    ForceVerbose
     }
 
 }

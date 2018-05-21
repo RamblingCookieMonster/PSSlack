@@ -67,7 +67,7 @@
             [int]($Date.ToUniversalTime() - $unixEpochStart).TotalSeconds
         }
 
-        Write-Verbose "$($PSBoundParameters | Out-String)"
+        Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
 
         $body = @{
             channel = $null
@@ -195,7 +195,7 @@
                         }
                     }
                 }
-                else 
+                else
                 {
                     $response
                 }
