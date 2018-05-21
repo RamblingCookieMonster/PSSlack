@@ -94,7 +94,13 @@
             'FileType'    {$body.filetype = $FileType}
             }
             Write-Verbose "Send-SlackApi -Body $($body | Format-List | Out-String)"
-            $response = Send-SlackApi -Method files.upload -Body $body -Token $Token
+            $Params = @{
+                Method = 'files.upload'
+                Body = $Body
+                Token = $Token
+                ForceVerbose = $ForceVerbose
+            }
+            $response = Send-SlackApi @Params
         } else {
 
             $fileName = (Split-Path -Path $Path -Leaf)
