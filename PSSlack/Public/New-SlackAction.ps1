@@ -44,30 +44,6 @@ function New-SlackAction {
              Required when data_source is static or otherwise unspecified. A maximum of 100 options can be provided in each menu.
 
              Options can be created using the New-SlackActionOption command
-             
-    .PARAMETER OptionGroups
-        Used only with message menus. An alternate, semi-hierarchal way to list available options. 
-        Provide an array of option group definitions. This replaces and supersedes the options array.
-
-        Option groups can be created using the New-SlackActionOptionGroup command
-
-    .PARAMETER DataSource
-        Accepts static, users, channels, conversations, or external. Our clever default behavior is default, which means the menu's options are 
-        provided directly in the posted message under options. Defaults to static.
-
-    .PARAMETER SelectedOptions
-        If provided, the first element of this array will be set as the pre-selected option for this menu. 
-        Any additional elements will be ignored. Example: [{"text":"<#C9A145GH3>", "value":"C9A145GH3"}]
-
-        The selected option's value field is contextual based on menu type and is always required:
-
-            For menus of type static (the default) this should be in the list of options included in the action.
-            For menus of type users, channels, or conversations, this should be a valid ID of the corresponding type.
-            For menus of type external this can be any value, up to a couple thousand characters.
-
-    .PARAMETER MinQueryLength
-        Only applies when data_source is set to external. 
-        If present, Slack will wait till the specified number of characters are entered before sending a request to your app's external suggestions API endpoint.
 
     .PARAMETER ExistingAction
         One or more actions to add this action to.
@@ -140,22 +116,7 @@ function New-SlackAction {
         [String]$Style,
         
         [PSTypeName('PSSlack.ActionOption')]
-        $Options,
-
-        [PSTypeName('PSSlack.ActionOptionGroup')]
-        $OptionGroups,
-
-        [ValidateSet("static",
-            "users",
-            "channels",
-            "conversations",
-            "external")]
-        [String]$DataSource,
-
-        [PSTypeName('PSSlack.ActionOption')]
-        $SelectedOptions,
-
-        [int]$MinQueryLength
+        $Options
     )
 
     Process {
@@ -168,10 +129,6 @@ function New-SlackAction {
             'Confirmation' {$Action.confirm = $Confirmation}
             'style' { $Action.style = $Style}
             'options' { $Action.options = $Options}
-            'optionGroups' { $Action.option_groups = $OptionGroups }
-            'dataSource' {$Action.data_source = $DataSource}
-            'selectedOptions' { $Action.selected_options = $SelectedOptions }
-            'minQueryLength' {$Action.min_query_length = $MinQueryLength}
         }
 
         Add-ObjectDetail -InputObject $Action -TypeName 'PSSlack.Action' -Passthru $False
