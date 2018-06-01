@@ -1,5 +1,6 @@
 
-function New-SlackActionOption {
+function New-SlackActionOption
+{
     <#
     .SYNOPSIS
         Creates an action option to use in a Slack action
@@ -78,9 +79,11 @@ function New-SlackActionOption {
         [String]$Description
     )
 
-    Process {
+    Process
+    {
         $ActionOption = @{}
-        switch ($PSBoundParameters.Keys) {
+        switch ($PSBoundParameters.Keys)
+        {
             'text' {$ActionOption.text = $Text}
             'value' {$ActionOption.value = $Value}
             'description' {$ActionOption.description = $Description}
@@ -88,10 +91,12 @@ function New-SlackActionOption {
 
         Add-ObjectDetail -InputObject $ActionOption -TypeName 'PSSlack.ActionOption' -Passthru $False
 
-        if ($ExistingActionOption) {
+        if ($ExistingActionOption)
+        {
             @($ExistingActionOption) + $ActionOption
         }
-        else {
+        else
+        {
             $ActionOption
         }
     }
