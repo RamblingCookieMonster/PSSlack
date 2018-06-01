@@ -1,5 +1,6 @@
 
-function New-SlackAction {
+function New-SlackAction
+{
     <#
     .SYNOPSIS
         Creates an action to use in a Slack message attachment.
@@ -119,9 +120,11 @@ function New-SlackAction {
         $Options
     )
 
-    Process {
+    Process
+    {
         $Action = @{}
-        switch ($PSBoundParameters.Keys) {
+        switch ($PSBoundParameters.Keys)
+        {
             'name' {$Action.name = $Name}
             'text' {$Action.text = $Text}
             'type' {$Action.type = $Type}
@@ -133,10 +136,12 @@ function New-SlackAction {
 
         Add-ObjectDetail -InputObject $Action -TypeName 'PSSlack.Action' -Passthru $False
 
-        if ($ExistingAction) {
+        if ($ExistingAction)
+        {
             @($ExistingAction) + $Action
         }
-        else {
+        else
+        {
             $Action
         }
     }

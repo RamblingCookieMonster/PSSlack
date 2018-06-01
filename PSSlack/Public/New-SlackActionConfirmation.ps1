@@ -1,5 +1,6 @@
 
-function New-SlackActionConfirmation {
+function New-SlackActionConfirmation
+{
     <#
     .SYNOPSIS
         Creates an action confirmation to use in a Slack action.
@@ -71,9 +72,11 @@ function New-SlackActionConfirmation {
         [String]$DismissText
     )
 
-    Process {
+    Process
+    {
         $ActionConfirmation = @{}
-        switch ($PSBoundParameters.Keys) {
+        switch ($PSBoundParameters.Keys)
+        {
             'text' {$ActionConfirmation.text = $Text}
             'title' {$ActionConfirmation.title = $Title}
             'oktext' {$ActionConfirmation.ok_text = $OkText}
