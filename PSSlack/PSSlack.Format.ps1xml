@@ -434,5 +434,64 @@
                 </TableRowEntries>
             </TableControl>
         </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PSSlack.Reminder</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Width>11</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>11</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>11</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>50</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>10</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>12</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>12</Width>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <Wrap />
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>ID</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Creator</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>User</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Text</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Recurring</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Time</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Complete_TS</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
     </ViewDefinitions>
 </Configuration>
