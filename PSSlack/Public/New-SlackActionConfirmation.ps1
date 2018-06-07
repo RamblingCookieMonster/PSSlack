@@ -42,7 +42,7 @@ function New-SlackActionConfirmation
         # Construct and send the message!
         New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
                                    -Title 'Failed to process account' `
-                                   -Actions $action
+                                   -Actions $action `
                                    -Fallback 'Your client is bad' |
             New-SlackMessage |
             Send-SlackMessage -Uri $WebhookUri
