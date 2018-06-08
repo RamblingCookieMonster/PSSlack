@@ -261,19 +261,23 @@ function New-SlackMessageAttachment
             $true
         })]
         [System.Collections.Hashtable[]]$Fields,
-
-        [Parameter(Mandatory=$true,
-                    ParameterSetName='Action')]
         [System.Collections.Hashtable[]]$Actions,
-
-        [Parameter(Mandatory=$true,
-                     ParameterSetName='Action')]
         [string]$CallBackId,
-
         [validateset('text','pretext','fields')]
         [string[]]$MarkDownFields # https://get.slack.help/hc/en-us/articles/202288908-How-can-I-add-formatting-to-my-messages-
     )
 
+    Begin
+    {
+        if(-not $Actions -and $CallBackId)
+        {
+            throw "The Actions parameter is required when the CallbackId parameter is used"
+        }
+        elseif(-not $CallBackId -and $Actions)
+        {
+            throw "The CallBackId parameter is required when the Actions parameter is used"
+        }
+    }
     Process
     {
         #consolidate the colour and severity parameters for the API.
