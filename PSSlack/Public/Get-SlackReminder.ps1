@@ -2,10 +2,12 @@ function Get-SlackReminder
 {
     <#
     .SYNOPSIS
-        Gets a list Slack reminders for the current user
+        Gets a list Slack reminders for the current user or information about
+        the specified Slack reminder using the Id parameter.
 
     .DESCRIPTION
-        Gets a list Slack reminders for the current user
+        Gets a list Slack reminders for the current user or information about
+        the specified Slack reminder using the Id parameter.
 
     .PARAMETER Token
         Token to use for the Slack API
