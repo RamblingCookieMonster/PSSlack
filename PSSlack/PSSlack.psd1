@@ -4,7 +4,7 @@
 RootModule = 'PSSlack.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.32'
+ModuleVersion = '0.1.0'
 
 # ID used to uniquely identify this module
 GUID = 'fb0a1f73-e16c-4829-b2a7-4fc8d7bed545'
@@ -96,7 +96,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Add option to retrieve billing info with Get-SlackUser'
+        ReleaseNotes = 'Add interactive message handling, thanks to Lucas Schill!'
 
     } # End of PSData hashtable
 
