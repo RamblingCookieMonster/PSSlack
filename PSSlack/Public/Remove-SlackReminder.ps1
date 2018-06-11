@@ -59,6 +59,9 @@ function Remove-SlackReminder
         # We create two reminders
         # We then search for the reminders and delete them by piping them into Remove-SlackReminder
 
+    .LINK
+        https://api.slack.com/methods/reminders.delete
+
     .FUNCTIONALITY
         Slack
     #>

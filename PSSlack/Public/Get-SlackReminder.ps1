@@ -36,6 +36,12 @@ function Get-SlackReminder
 
         # Gets the information for the reminder specified by the Reminder parameter
 
+    .LINK
+        https://api.slack.com/methods/reminders.info
+
+    .LINK
+        https://api.slack.com/methods/reminders.list
+
     .FUNCTIONALITY
         Slack
     #>

@@ -61,6 +61,9 @@ function Set-SlackReminderComplete
         # We create two reminders
         # We then search for the reminders and set the status on them to complete by piping them into Set-SlackReminder
 
+    .LINK
+        https://api.slack.com/methods/reminders.complete
+
     .FUNCTIONALITY
         Slack
     #>

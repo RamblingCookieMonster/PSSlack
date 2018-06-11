@@ -38,6 +38,9 @@ function New-SlackReminder
 
         # Creates a reminder with the name "Do some things" set for 1 minute from now
 
+    .LINK
+        https://api.slack.com/methods/reminders.add
+
     .FUNCTIONALITY
         Slack
     #>
