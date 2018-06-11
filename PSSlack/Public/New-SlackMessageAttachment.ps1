@@ -71,6 +71,17 @@ function New-SlackMessageAttachment
         Each hashtable provided must contain a "title" key and a "value" key.
         Optionally it may also contain "Short" which is a boolean parameter.
 
+    .PARAMETER Actions
+        A collection of actions (buttons or menus) to include in the attachment. 
+        Required when using message buttons or message menus. A maximum of 5 actions per attachment may be provided.
+        Actions can be created with the New-SlackAction command
+
+    .PARAMETER CallbackId
+        The provided string will act as a unique identifier for the collection of buttons within the attachment. 
+        It will be sent back to your message button action URL with each invoked action. 
+        This field is required when the attachment contains message buttons. 
+        It is key to identifying the interaction you're working with.
+
     .PARAMETER MarkDownFields
         One or more fields (text, pretext, fields) to enable markdown-esque formatting in.
 
@@ -170,11 +181,38 @@ function New-SlackMessageAttachment
         # Creates an attachment with the fields from our error
         # Creates a message fromthat attachment and sents it with a uri
 
+    .EXAMPLE
+
+        # This example illustrates a pattern where you might
+        # want to add an action (button or menu) to your Slack attachment.
+        # This can be useful when working with Slack bots or integrations that
+        # make calls out with the action data
+
+        # Create an action using the New-SlackAction command
+        $action = New-SlackAction -Name Acknowledge -Text Acknowledge -Type button
+
+        $WebhookUri = "https://hooks.slack.com/services/SomeUniqueId"
+
+        # Construct and send the message!
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
+                                   -Title 'Failed to process account' `
+                                   -Actions $action `
+                                   -Fallback 'Your client is bad' |
+            New-SlackMessage |
+            Send-SlackMessage -Uri $WebhookUri
+
+        # We create an action object with an 'Acknowledge' button
+        # Creates an attachment with the button created in the action object
+        # Creates a message from that attachment and sents it with a uri
+
     .LINK
         https://github.com/RamblingCookieMonster/PSSlack
 
     .LINK
         https://api.slack.com/docs/attachments
+
+    .LINK
+        https://api.slack.com/docs/interactive-message-field-guide
 
     .LINK
         https://api.slack.com/methods/chat.postMessage
@@ -223,10 +261,23 @@ function New-SlackMessageAttachment
             $true
         })]
         [System.Collections.Hashtable[]]$Fields,
+        [System.Collections.Hashtable[]]$Actions,
+        [string]$CallBackId,
         [validateset('text','pretext','fields')]
         [string[]]$MarkDownFields # https://get.slack.help/hc/en-us/articles/202288908-How-can-I-add-formatting-to-my-messages-
     )
 
+    Begin
+    {
+        if(-not $Actions -and $CallBackId)
+        {
+            throw "The Actions parameter is required when the CallbackId parameter is used"
+        }
+        elseif(-not $CallBackId -and $Actions)
+        {
+            throw "The CallBackId parameter is required when the Actions parameter is used"
+        }
+    }
     Process
     {
         #consolidate the colour and severity parameters for the API.
@@ -248,6 +299,8 @@ function New-SlackMessageAttachment
             'TitleLink' { $Attachment.title_link = $TitleLink }
             'Text' {$Attachment.text = $Text}
             'fields' { $Attachment.fields = $Fields } #Fields are defined by the user as an Array of HashTables.
+            'actions' { $Attachment.actions = $Actions } #Actions are defined by the user as an Array of HashTables.
+            'CallbackId' { $Attachment.callback_id = $CallbackId }
             'ImageUrl' {$Attachment.image_url = $ImageURL}
             'ThumbUrl' {$Attachment.thumb_url = $ThumbURL}
             'MarkDownFields' {$Attachment.mrkdwn_in = @($MarkDownFields)}

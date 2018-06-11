@@ -350,7 +350,7 @@ function Send-SlackMessage {
             {
                 if($Message.attachments)
                 {
-                    $Message.attachments = ConvertTo-Json -InputObject @($Message.attachments) -Depth 4 -Compress
+                    $Message.attachments = ConvertTo-Json -InputObject @($Message.attachments) -Depth 6 -Compress
                 }
 
                 Write-Verbose "Send-SlackApi -Body $($Message | Format-List | Out-String)"
@@ -372,7 +372,7 @@ function Send-SlackMessage {
                 if($ForceVerbose) {
                     $ProxyParam.Add('Verbose', $true)
                 }
-                $json = ConvertTo-Json -Depth 4 -Compress -InputObject $Message
+                $json = ConvertTo-Json -Depth 6 -Compress -InputObject $Message
                 Invoke-RestMethod @ProxyParam -Method Post -Body $json -Uri $Uri
             }
             else
