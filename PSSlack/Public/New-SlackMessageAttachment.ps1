@@ -223,6 +223,7 @@ function New-SlackMessageAttachment
     (
         [Parameter(ValueFromPipeline = $True)]
         [PSTypeName('PSSlack.MessageAttachment')]
+        [object[]]
         $ExistingAttachment,
 
         [Parameter(Mandatory=$true,
@@ -277,9 +278,7 @@ function New-SlackMessageAttachment
         {
             throw "The CallBackId parameter is required when the Actions parameter is used"
         }
-    }
-    Process
-    {
+        
         #consolidate the colour and severity parameters for the API.
         if($PSCmdlet.ParameterSetName -like 'Severity')
         {
@@ -307,14 +306,25 @@ function New-SlackMessageAttachment
         }
 
         Add-ObjectDetail -InputObject $Attachment -TypeName 'PSSlack.MessageAttachment' -Passthru $False
-
-        if($ExistingAttachment)
+        $ReturnObject = @()
+        $ptime = 0
+    }
+    Process
+    {
+        foreach($a in $ExistingAttachment)
         {
-            @($ExistingAttachment) + $Attachment
+            $ReturnObject += $a
         }
-        else
+        
+        Write-Verbose $ptime
+        If($ExistingAttachment)
         {
-            $Attachment
+            Write-Verbose "Existing Attachemnt: $($ExistingAttachment | Convertto-Json -compress)"
         }
+    }
+    End {
+        $ReturnObject += $Attachment
+       # [array]::Reverse($ReturnObject)
+        $ReturnObject
     }
 }

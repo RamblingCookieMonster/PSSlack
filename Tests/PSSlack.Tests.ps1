@@ -196,3 +196,25 @@ Describe "Test-SlackApi" {
 }
 
 Remove-Item $env:TEMP\$env:USERNAME-$env:COMPUTERNAME-PSSlack.xml -force -Confirm:$False
+
+Describe 'New-SlackMessageAttachment' {
+    It 'Should be a hashtable when not on pipeline' {
+        $message = New-SlackMessageAttachment -Text "Test" -Fallback "test"
+        $message | Should -BeOfType Hashtable
+    }
+
+    It 'Should Be an Array with Three Members, when Piped Three Times' {
+        $message = New-SlackMessageAttachment -text "test1" -Fallback 'Test1' |
+          New-SlackMessageAttachment -text "test2" -Fallback "test2" |
+          New-SlackMessageAttachment -text "test3" -FallBack "test3"
+        $message.Count | Should -BeExactly 3
+    }
+    It 'Should Be an Array with Five Members, when Piped Five Times' {
+        $message = New-SlackMessageAttachment -text "test1" -Fallback 'Test1' |
+          New-SlackMessageAttachment -text "test2" -Fallback "test2" |
+          New-SlackMessageAttachment -text "test3" -FallBack "test3" |
+          New-SlackMessageAttachment -text "test4" -Fallback "test4" |
+          New-SlackMessageAttachment -text "test5" -Fallback "test5" 
+        $message.Count | Should -BeExactly 5
+    }
+}
