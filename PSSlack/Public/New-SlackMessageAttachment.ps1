@@ -307,7 +307,6 @@ function New-SlackMessageAttachment
 
         Add-ObjectDetail -InputObject $Attachment -TypeName 'PSSlack.MessageAttachment' -Passthru $False
         $ReturnObject = @()
-        $ptime = 0
     }
     Process
     {
@@ -316,7 +315,6 @@ function New-SlackMessageAttachment
             $ReturnObject += $a
         }
         
-        Write-Verbose $ptime
         If($ExistingAttachment)
         {
             Write-Verbose "Existing Attachemnt: $($ExistingAttachment | Convertto-Json -compress)"
@@ -324,7 +322,6 @@ function New-SlackMessageAttachment
     }
     End {
         $ReturnObject += $Attachment
-       # [array]::Reverse($ReturnObject)
         $ReturnObject
     }
 }
