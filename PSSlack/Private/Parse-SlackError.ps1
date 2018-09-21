@@ -73,12 +73,12 @@ function Parse-SlackError {
                 Message = "Authentication token is for a deleted user or workspace."
             }
 
-            no_permission = {
+            no_permission = @{
                 Message = "The workspace token used in this request does not have the permissions necessary to complete the request."
 
             }
 
-            ratelimited = {
+            ratelimited = @{
                 Message = "Slack API rate-limit exceeded."
                 RecommendedAction = "Try again in a few moments."
             }
