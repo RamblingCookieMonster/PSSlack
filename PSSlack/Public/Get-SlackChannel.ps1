@@ -15,6 +15,9 @@
     .PARAMETER Name
         One or more channel names to return.  Defaults to all.  Accepts wildcards.
 
+    .PARAMETER Types
+        Mix and match channel types by providing array of any combination of public_channel, private_channel, mpim, im
+
     .PARAMETER ExcludeArchived
         Whether to exclude archived channels. Default is to include all.
 
@@ -28,25 +31,36 @@
     param (
         $Token = $Script:PSSlack.Token,
         [string[]]$Name,
+        [string[]]$Types,
         [switch]$ExcludeArchived,
         [switch]$Raw
     )
     end
     {
         Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
-
-        if($ExcludeArchived)
+        $body = @{}
+        if ($ExcludeArchived)
         {
-            $body = @{ exclude_archived = 1 }
+            $body.Add("exclude_archived",1)
         }
         else
         {
-            $body = @{ exclude_archived = 0 }
+            $body.Add("exclude_archived",0)
         }
+
+        if ($Types)
+        {
+            $body.add("types",$($Types -join ","))
+        }
+        else
+        {
+            $body.add("types","public_channel,private_channel")
+        }
+        
         $params = @{
             Body = $body
             Token = $Token
-            Method = 'channels.list'
+            Method = 'conversations.list'
         }
         $RawChannels = Send-SlackApi @params
 
