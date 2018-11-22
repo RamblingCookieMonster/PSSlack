@@ -442,13 +442,13 @@
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader>
-                        <Width>11</Width>
+                        <Width>10</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>11</Width>
+                        <Width>10</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>11</Width>
+                        <Width>15</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
                         <Width>50</Width>
@@ -468,13 +468,13 @@
                         <Wrap />
                         <TableColumnItems>
                             <TableColumnItem>
-                                <PropertyName>ID</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
                                 <PropertyName>Creator</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>User</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>UserName</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Text</PropertyName>
@@ -483,10 +483,10 @@
                                 <PropertyName>Recurring</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Time</PropertyName>
+                                <PropertyName>Date</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Complete_TS</PropertyName>
+                                <PropertyName>DateComplete</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
