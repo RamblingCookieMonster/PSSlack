@@ -31,6 +31,7 @@
     param (
         $Token = $Script:PSSlack.Token,
         [string[]]$Name,
+        [ValidateSet('public_channel', 'private_channel', 'mpim', 'im')]
         [string[]]$Types,
         [switch]$ExcludeArchived,
         [switch]$Raw
