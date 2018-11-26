@@ -56,10 +56,10 @@ function Get-SlackReminder
     )
     begin
     {
-        $ProxyParam = @{}
+        $Params = @{}
         if ($Proxy)
         {
-            $ProxyParam.Proxy = $Proxy
+            $Params.Proxy = $Proxy
         }
     }
     process
@@ -69,6 +69,7 @@ function Get-SlackReminder
         if ($ReminderId)
         {
             $body.reminder = $ReminderId
+            $Params.add('Body', $Body)
             $method = "reminders.info"
         }
         else
@@ -79,16 +80,7 @@ function Get-SlackReminder
     end
     {
         Write-Verbose "Send-SlackApi"
-        if ($ReminderId)
-        {
-            $response = Send-SlackApi @ProxyParam -Method $method -Body $body -Token $Token -ForceVerbose:$ForceVerbose
-            $returnObj = $response.reminder
-        }
-        else
-        {
-            $response = Send-SlackApi @ProxyParam -Method $method -Token $Token -ForceVerbose:$ForceVerbose
-            $returnObj = $response.reminders
-        }
-        Add-ObjectDetail -InputObject $returnObj -TypeName 'PSSlack.Reminder'
+        $response = Send-SlackApi @Params -Method $method -Token $Token -ForceVerbose:$ForceVerbose
+        Parse-SlackReminder -InputObject $response
     }
 }
