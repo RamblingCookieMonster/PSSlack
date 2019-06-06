@@ -24,6 +24,13 @@
     .PARAMETER Raw
         If specified, we provide raw output and do not parse any responses
 
+    .PARAMETER Paging
+        If specified, and more data is available when a paging cursor is returned, continue querying Slack until
+            we have retrieved all the data available.
+
+    .PARAMETER MaxQueries
+        Limit the count of API queries to this number.  Only used if you enable -Paging
+
     .FUNCTIONALITY
         Slack
     #>
@@ -34,12 +41,16 @@
         [ValidateSet('public_channel', 'private_channel', 'mpim', 'im')]
         [string[]]$Types,
         [switch]$ExcludeArchived,
-        [switch]$Raw
+        [switch]$Raw,
+        [switch]$Paging,
+        [int]$MaxQueries
     )
     end
     {
         Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
-        $body = @{}
+        $body = @{
+            limit = 200
+        }
         if ($ExcludeArchived)
         {
             $body.Add("exclude_archived",1)
@@ -57,13 +68,33 @@
         {
             $body.add("types","public_channel,private_channel")
         }
-        
-        $params = @{
-            Body = $body
-            Token = $Token
-            Method = 'conversations.list'
-        }
-        $RawChannels = Send-SlackApi @params
+
+        $RawChannels = @()
+        $has_more    = $false
+        $Queries     = 0
+        do {
+            $params = @{
+                Body   = $body
+                Token  = $Token
+                Method = 'conversations.list'
+            }
+            $response = Send-SlackApi @params
+            $Queries++
+            if (-not [string]::IsNullOrEmpty($response.response_metadata.next_cursor))
+            {
+                $has_more = $true
+                $body['cursor'] = $response.response_metadata.next_cursor
+            }
+            else
+            {
+                $has_more = $false
+            }
+            $RawChannels += $response
+        } until (
+            -not $Paging -or
+            -not $has_more -or
+            ($MaxQueries -and $Queries -ge $MaxQueries)
+        )
 
         $HasWildCard = $False
         foreach($Item in $Name)
