@@ -37,7 +37,6 @@
     .FUNCTIONALITY
         Slack
     #>
-
     [cmdletbinding(DefaultParameterSetName = 'Content')]
     param (
         [string]$Token = $Script:PSSlack.Token,
@@ -47,11 +46,11 @@
         [switch]$ExcludeBots,
         [switch]$Raw
     )
+
     begin
     {
         $body = @{}
-        if($Presence)
-        {
+        if ($Presence) {
             $body.add('presence', 1)
         }
 
@@ -59,38 +58,31 @@
             Token = $Token
             Method = 'users.list'
         }
-        if($body.keys.count -gt 0)
-        {
+        if ($body.keys.count -gt 0) {
             $params.add('body', $Body)
         }
-        $RawUsers = Send-SlackApi @params
+        $RawUsers = Send-SlackApi @params -EnablePagination
 
-        $HasWildCard = $False
-        foreach($Item in $Name)
-        {
-            if($Item -match '\*')
-            {
+        $HasWildCard = $false
+        foreach ($Item in $Name) {
+            if ($Item -match '\*') {
                 $HasWildCard = $true
                 break
             }
         }
 
-        if($Billing)
-        {
-            $BillingInfo = Send-SlackApi -Token $Token -Method team.billableInfo
+        if ($Billing) {
+            $BillingInfo = Send-SlackApi -Token $Token -Method team.billableInfo -EnablePagination
             $UserIDs = $BillingInfo.billable_info.psobject.properties.name
-            foreach($User in $RawUsers.members)
-            {
+            foreach ($User in $RawUsers.members) {
                 $UserId = $User.Id
-                if($UserIDs -contains $UserId)
-                {
+                if ($UserIDs -contains $UserId) {
                     Add-Member -InputObject $User -MemberType NoteProperty -Name BillingActive -Value $BillingInfo.billable_info.$UserId.billing_active -Force
                 }
             }
         }
 
-        if($Name -and -not $HasWildCard)
-        {
+        if ($Name -and -not $HasWildCard) {
             # torn between independent queries, or filtering users.list
             # submit a PR if this isn't performant enough or doesn't make sense.
             $Users = $RawUsers.members |
@@ -102,29 +94,25 @@
 
             # allow like operator on each channel requested in the param, avoid dupes
             $UserHash = [ordered]@{}
-            foreach($SlackUser in $AllUsers)
-            {
-                foreach($Username in $Name)
-                {
-                    if($SlackUser.Name -like $Username -and -not $UserHash.Contains($SlackUser.id))
-                    {
+            foreach ($SlackUser in $AllUsers) {
+                foreach ($Username in $Name) {
+                    if ($SlackUser.Name -like $Username -and -not $UserHash.Contains($SlackUser.id)) {
                         $UserHash.Add($SlackUser.Id, $SlackUser)
                     }
                 }
             }
+
             $Users = $UserHash.Values
         }
-        else # nothing specified
-        {
+        else {
+            # nothing specified
             $Users = $RawUsers.members
         }
 
-        if($Raw)
-        {
+        if ($Raw) {
             $RawUsers
         }
-        else
-        {
+        else {
             Parse-SlackUser -InputObject $Users
         }
     }
