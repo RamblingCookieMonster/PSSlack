@@ -40,6 +40,9 @@
         *** WARNING ***
         If you set this to true, your Slack token will be visible as plain text in verbose output
 
+    .PARAMETER ContentType
+        Set the default content type for messages
+
     .PARAMETER Path
         If specified, save config file to this file path.  Defaults to PSSlack.xml in the user temp folder on Windows, or .psslack in the user's home directory on Linux/macOS.
 
@@ -54,6 +57,7 @@
         [string]$Proxy,
         [bool]$MapUser,
         [bool]$ForceVerbose,
+        [string]$ContentType,
         [string]$Path = $script:_PSSlackXmlpath
     )
 
@@ -65,6 +69,7 @@
         'Proxy'        { $Script:PSSlack.Proxy = $Proxy }
         'MapUser'      { $Script:PSSlack.MapUser = $MapUser }
         'ForceVerbose' { $Script:PSSlack.ForceVerbose = $ForceVerbose }
+        'ContentType'  { $Script:PSSlack.ContentType = $ContentType }
     }
 
     Function Encrypt {
@@ -82,7 +87,8 @@
                                 @{l='Token';e={Encrypt $_.Token}},
                                 Proxy,
                                 MapUser,
-                                ForceVerbose |
+                                ForceVerbose,
+                                ContentType |
         Export-Clixml -Path $Path -force
 
 }

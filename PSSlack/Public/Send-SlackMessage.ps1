@@ -31,6 +31,11 @@ function Send-SlackMessage {
     .PARAMETER SlackMessage
         A SlackMessage created by New-SlackMessage
 
+    .PARAMETER ContentType
+        Set the content type of the message.
+
+        Default value is the value set by Set-PSSlackConfig.
+
     .PARAMETER Channel
         Channel, private group, or IM channel to send message to. Can be an encoded ID, or a name.
 
@@ -248,6 +253,10 @@ function Send-SlackMessage {
         [ValidateNotNullOrEmpty()]
         [string]$Proxy = $Script:PSSlack.Proxy,
 
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]$ContentType = $Script:PSSlack.ContentType,
+
         [PSTypeName('PSSlack.Message')]
         [parameter(ParameterSetName = 'SlackMessage',
                    ValueFromPipeline = $True)]
@@ -314,6 +323,10 @@ function Send-SlackMessage {
     }
     process
     {
+        if($ContentType -eq "")
+        {
+            $ContentType = "text/plain; charset=utf-8"
+        }
         if($PSCmdlet.ParameterSetName -eq 'Param')
         {
             $body = @{ }
@@ -354,7 +367,7 @@ function Send-SlackMessage {
                 }
 
                 Write-Verbose "Send-SlackApi -Body $($Message | Format-List | Out-String)"
-                $response = Send-SlackApi @ProxyParam -Method chat.postMessage -Body $Message -Token $Token -ForceVerbose:$ForceVerbose
+                $response = Send-SlackApi @ProxyParam -Method chat.postMessage -Body $Message -Token $Token -ContentType $ContentType -ForceVerbose:$ForceVerbose
 
                 if ($response.ok)
                 {
@@ -373,7 +386,7 @@ function Send-SlackMessage {
                     $ProxyParam.Add('Verbose', $true)
                 }
                 $json = ConvertTo-Json -Depth 6 -Compress -InputObject $Message
-                Invoke-RestMethod @ProxyParam -Method Post -Body $json -Uri $Uri
+                Invoke-RestMethod @ProxyParam -Method Post -Body $json -Uri $Uri -ContentType $ContentType
             }
             else
             {
