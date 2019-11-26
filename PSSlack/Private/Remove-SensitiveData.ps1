@@ -19,7 +19,7 @@ function Remove-SensitiveData {
             $Output
         }
         else {
-            $InputObject | Select-Object -Property * -ExcludeProperty $SensitiveProperties
+            $InputObject | Microsoft.PowerShell.Utility\Select-Object -Property * -ExcludeProperty $SensitiveProperties
         }
     }
 }

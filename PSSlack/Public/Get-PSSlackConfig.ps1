@@ -49,7 +49,7 @@
             }
         }
         Import-Clixml -Path $Path |
-            Select-Object -Property ArchiveUri,
+            Microsoft.PowerShell.Utility\Select-Object -Property ArchiveUri,
                                     @{l='Uri';e={Decrypt $_.Uri}},
                                     @{l='Token';e={Decrypt $_.Token}},
                                     Proxy,
