@@ -209,4 +209,5 @@ $_PSSlackColorMap = @{
     yellowgreen = "#9ACD32"
 }
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 Export-ModuleMember -Function $Public.Basename -Variable _PSSlackColorMap
