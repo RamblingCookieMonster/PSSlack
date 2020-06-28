@@ -123,13 +123,15 @@ function Remove-SlackMessage {
             }
             switch ($PSCmdlet.ParameterSetName) {
                 "ByParameter" {
-                    $Body.ts = $MessageTS
+                    $Body.ts = $TimeStamp
                 }
                 "ByObject-History" {
                     $Body.ts = $Item.raw.ts
                 }
                 "ByObject-SearchResult" {
-                    $Body.channel = $Item.Channel
+                  if ([string]::IsNullOrWhiteSpace($Body.channel)){
+                  	  $Body.channel = $Item.Channel
+                  	}
                     $Body.ts = $Item.raw.ts
                 }
             }
