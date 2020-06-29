@@ -108,7 +108,6 @@ function Remove-SlackMessage {
     }
 
     process {
-
         switch ($PSCmdlet.ParameterSetName) {
             "ByParameter"           { $PrimaryIterator = $TimeStamp }
             "ByObject-History"      { $PrimaryIterator = $HistoryObject }
@@ -129,9 +128,7 @@ function Remove-SlackMessage {
                     $Body.ts = $Item.raw.ts
                 }
                 "ByObject-SearchResult" {
-                  if ([string]::IsNullOrWhiteSpace($Body.channel)){
-                  	  $Body.channel = $Item.Channel
-                  	}
+                    $Body.channel = $Item.raw.channel.id
                     $Body.ts = $Item.raw.ts
                 }
             }
