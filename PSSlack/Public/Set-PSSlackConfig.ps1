@@ -77,7 +77,7 @@
 
     #Write the global variable and the xml
     $Script:PSSlack |
-        Select-Object -Property ArchiveUri,
+        Microsoft.PowerShell.Utility\Select-Object -Property ArchiveUri,
                                 @{l='Uri';e={Encrypt $_.Uri}},
                                 @{l='Token';e={Encrypt $_.Token}},
                                 Proxy,
