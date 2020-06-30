@@ -12,10 +12,10 @@ function Send-SlackChannelInvite {
         Default value is the value set by Set-PSSlackConfig
 
     .PARAMETER Channel
-        Channel, private group, or IM channel to send file to. Can be an encoded ID, or a name.
+        ID of the Channel, private group, or IM channel to send file to.
 
     .PARAMETER User
-        Optional initial comment for the file
+        One or more user IDs to invite to the channel
 
     .PARAMETER ForceVerbose
         If specified, don't explicitly remove verbose output from Invoke-RestMethod
@@ -25,8 +25,8 @@ function Send-SlackChannelInvite {
 
     .EXAMPLE
         Send-SlackChannelInvite -Token $Token `
-                       -Channel test_channel `
-                       -User test_user
+                                -Channel ABC123ID `
+                                -User XYZ890ID
 
     .FUNCTIONALITY
         Slack
@@ -35,7 +35,7 @@ function Send-SlackChannelInvite {
     param (
         [string]$Token = $Script:PSSlack.Token,
         [string]$Channel,
-        [string]$User,
+        [string[]]$User,
         [switch]$ForceVerbose = $Script:PSSlack.ForceVerbose
     )
     process
@@ -43,11 +43,11 @@ function Send-SlackChannelInvite {
         $body = @{}
         switch ($psboundparameters.keys) {
             'Channel'     { $body.channel = $Channel }
-            'User'        { $body.user = $User }
+            'User'        { $body.users = $User }
         }
         Write-Verbose "Send-SlackApi -Body $($body | Format-List | Out-String)"
         $Params = @{
-            Method = 'channels.invite'
+            Method = 'conversations.invite'
             Body = $Body
             Token = $Token
             ForceVerbose = $ForceVerbose
