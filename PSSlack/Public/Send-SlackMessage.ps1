@@ -87,6 +87,13 @@ function Send-SlackMessage {
 
         See attachments spec https://api.slack.com/docs/attachments
 
+    .PARAMETER Blocks
+        Optional rich structured message blocks.
+
+        Provide one or more hash tables created using New-SlackMessageBlock
+
+        https://api.slack.com/reference/block-kit/blocks
+
     .PARAMETER ForceVerbose
         If specified, don't explicitly remove verbose output from Invoke-RestMethod
 
@@ -108,26 +115,57 @@ function Send-SlackMessage {
         # Send a message to @wframe (not a channel), parsing the text to linkify usernames and channels
 
     .EXAMPLE
-        # This is a simple example illustrating some common options
-        # when constructing a message attachment
-        # giving you a richer message
+        # This example demonstrates that you can chain new attachments & blocks
+        # together to form a multi-attachment / multi block message
+
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
-        New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
+        
+            $token = "xoxb-3545604078-1314461333735-slTTgRdeBHdbcYIC6tbu9UIH"
+
+            $elements_of = New-SlackMessageBlockElement -Type overflow -ActionId "ofId" -Options @{ yes = "Oh Yeah" ; no = "Oh gosh no!" }
+            $elements_ms = New-SlackMessageBlockElement -Type multi_static_select -ActionId "msId" -PlaceHolder "Multi select text" -Options @{ y = "Why not ?" ; n = "I'd rather eat my thongue" ; mb = "Call me... maybe?" } -InitialOptions @{ y ="Why not ?"} -MaxSelectedItems 2
+            $elements_ss = New-SlackMessageBlockElement -Type static_select -ActionId "ssId" -PlaceHolder "Single Select text" -Options @{ y = "Why not ?" ; n = "I'd rather eat my thongue" ; mb = "Call me... maybe?" }  -InitialOption @{ n = "I'd rather eat my thongue" }
+
+            $elements_bt = New-SlackMessageBlockElement -Type button -ActionId "btnGit" -Text "Go to Github" -Style primary -Value "value_git" -Url "https://github.com/" | `
+                New-SlackMessageBlockElement -Type button -ActionId "btnGoogle" -Text "Prefer google" -Style danger -Value "value_google" -Url "https://www.google.fr"
+
+            $elements_im = New-SlackMessageBlockElement -Type image -AltText "Some alt text" -ImageUrl "https://imgflip.com/s/meme/Conspiracy-Keanu.jpg"
+
+            $blocks = New-SlackMessageBlock -Type header -Text "Lorem Ipsum header" | `
+                    New-SlackMessageBlock -Type divider | `
+                    New-SlackMessageBlock -Type section -Fields ("*bold*","_underligned_") -Text "Some text before overflow" -Accessory $elements_of | `
+                    New-SlackMessageBlock -Type divider | `
+                    New-SlackMessageBlock -Type section -Text "Multi select text section" -Accessory $elements_ms | `
+                    New-SlackMessageBlock -Type divider | `
+                    New-SlackMessageBlock -Type section -Text "Single select text section" -Accessory $elements_ss | `
+                    New-SlackMessageBlock -Type divider | `
+                    New-SlackMessageBlock -Type actions -Elements $elements_bt | `
+                    New-SlackMessageBlock -Type divider | `
+                    New-SlackMessageBlock -Type section -Text "Image text section" -Accessory $elements_im
+
+            New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
                                    -Title 'The System Is Down' `
                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
-                                   -Text 'Please Do The Needful' `
+                                   -Text 'Everybody panic!' `
                                    -Pretext 'Everything is broken' `
-                                   -AuthorName 'SCOM Bot' `
-                                   -AuthorIcon 'http://ramblingcookiemonster.github.io/images/tools/wrench.png' `
                                    -Fallback 'Your client is bad' |
+            New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
+                                       -Title 'The Other System Is Down' `
+                                       -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                       -Text 'Please Do The Needful' `
+                                       -Fallback 'Your client is bad' |
             New-SlackMessage -Channel '@wframe' `
-                             -IconEmoji :bomb: |
+                             -IconEmoji :bomb: `
+                             -AsUser `
+                             -Username 'SCOM Bot' `
+                             -Blocks $blocks |
             Send-SlackMessage -Token $Token
 
-        # Create a message attachment with details about an alert
-        # Attach this to a slack message sending to the devnull channel
-        # Send the newly created message using a token
+        # Create a BlockElement of each type, then add it to a block,
+        # Create an attachment, create another attachment,
+        # add these (attachments & blocks) to a message,
+        # and send with a token
 
     .EXAMPLE
         # This example demonstrates that you can chain new attachments
@@ -300,6 +338,10 @@ function Send-SlackMessage {
         [PSTypeName('PSSlack.MessageAttachment')]
         [System.Collections.Hashtable[]]$Attachments,
 
+        [parameter(ParameterSetName = 'Param')]
+        [PSTypeName('PSSlack.MessageBlock')]
+        [System.Collections.Hashtable[]]$Blocks,
+
         [switch]$ForceVerbose = $Script:PSSlack.ForceVerbose
     )
     begin
@@ -331,6 +373,7 @@ function Send-SlackMessage {
                 'UnfurlLinks' {$body.unfurl_links = $UnfurlLinks}
                 'UnfurlMedia' {$body.unfurl_media = $UnfurlMedia}
                 'attachments' {$body.attachments = $Attachments}
+                'blocks'      {$body.blocks = $Blocks }
             }
             $Messages += $Body
         }
@@ -351,6 +394,11 @@ function Send-SlackMessage {
                 if($Message.attachments)
                 {
                     $Message.attachments = ConvertTo-Json -InputObject @($Message.attachments) -Depth 6 -Compress
+                }
+                
+                if($Message.blocks)
+                {
+                    $Message.blocks = ConvertTo-Json -InputObject @($Message.blocks) -Depth 10 -Compress
                 }
 
                 Write-Verbose "Send-SlackApi -Body $($Message | Format-List | Out-String)"
