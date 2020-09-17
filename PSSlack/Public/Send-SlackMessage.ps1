@@ -120,9 +120,6 @@ function Send-SlackMessage {
 
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
-        
-            $token = "xoxb-3545604078-1314461333735-slTTgRdeBHdbcYIC6tbu9UIH"
-
             $elements_of = New-SlackMessageBlockElement -Type overflow -ActionId "ofId" -Options @{ yes = "Oh Yeah" ; no = "Oh gosh no!" }
             $elements_ms = New-SlackMessageBlockElement -Type multi_static_select -ActionId "msId" -PlaceHolder "Multi select text" -Options @{ y = "Why not ?" ; n = "I'd rather eat my thongue" ; mb = "Call me... maybe?" } -InitialOptions @{ y ="Why not ?"} -MaxSelectedItems 2
             $elements_ss = New-SlackMessageBlockElement -Type static_select -ActionId "ssId" -PlaceHolder "Single Select text" -Options @{ y = "Why not ?" ; n = "I'd rather eat my thongue" ; mb = "Call me... maybe?" }  -InitialOption @{ n = "I'd rather eat my thongue" }
