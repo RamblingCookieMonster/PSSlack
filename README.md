@@ -210,6 +210,17 @@ Currently evaluating .NET Core / Cross-platform functionality.  The following wi
 * Serialization of URIs and tokens via Set-PSSlackConfig.  Set these values per-session if needed
 * [System.Drawing.Color]::SomeColor shortcut.  Use the provided $_PSSlackColorMap hash to simplify this.  E.g. $_PSSlackColorMap.red
 
+When composing multi-line messages use the PowerShell newline inside double-quotes:
+
+```
+$Uri = "Some incoming webhook uri from Slack"
+
+Send-SlackMessage -Uri $Uri `
+                  -Channel '@wframe' `
+                  -Parse full `
+                  -Text "Hello @wframe`nJoin me in #devnull!"
+```
+
 There are a good number of Slack functions out there, including jgigler's [PowerShell.Slack](https://github.com/jgigler/Powershell.Slack) and Steven Murawski's [Slack](https://github.com/smurawski/Slack).  We borrowed some ideas and code from these - thank you!
 
 If you want to go beyond interacting with the Slack API, you might consider [using a bot](http://ramblingcookiemonster.github.io/PoshBot/#references)
