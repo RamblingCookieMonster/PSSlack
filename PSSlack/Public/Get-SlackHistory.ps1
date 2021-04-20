@@ -25,7 +25,7 @@
         If specified, include history from the date specified in Before and/or After parameters
 
     .PARAMETER Count
-        Number of messages to return per query.  Defaults to 100.  Max 1000
+        Maximum number of messages to return per query (see 'limit' on API docs).  Defaults to 100.  Max 1000
 
     .PARAMETER Paging
         If specified, and more data is available with a given 'Count', continue querying Slack until
@@ -64,7 +64,7 @@
         Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
         $body = @{
             channel = $null
-            count = $count
+            limit = $count
         }
         if($Paging)
         {
@@ -92,7 +92,7 @@
         }
         $params = @{
             Token = $Token
-            Method = 'channels.history'
+            Method = 'conversations.history'
             Body = $body
         }
         $Queries = 1
