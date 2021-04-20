@@ -108,7 +108,7 @@
 
         if($Name -and -not $HasWildCard)
         {
-            # torn between independent queries, or filtering channels.list
+            # torn between independent queries, or filtering conversations.list
             # submit a PR if this isn't performant enough or doesn't make sense.
             $Channels = $RawChannels.channels |
                 Where-Object {$Name -Contains $_.name}
