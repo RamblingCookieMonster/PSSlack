@@ -34,19 +34,21 @@
     end
     {
         Write-Verbose "$($PSBoundParameters | Remove-SensitiveData | Out-String)"
-
+        $body = @{
+            types = 'private_channel';
+        };
         if($ExcludeArchived)
         {
-            $body = @{ exclude_archived = 1 }
+            $body['exclude_archived'] = 1
         }
         else
         {
-            $body = @{ exclude_archived = 0 }
+            $body['exclude_archived'] = 0
         }
         $params = @{
             Body = $body
             Token = $Token
-            Method = 'groups.list'
+            Method = 'users.conversations'
         }
         $RawGroups = Send-SlackApi @params
 
@@ -62,14 +64,14 @@
 
         if($Name -and -not $HasWildCard)
         {
-            # torn between independent queries, or filtering groups.list
+            # torn between independent queries, or filtering users.conversations
             # submit a PR if this isn't performant enough or doesn't make sense.
-            $Groups = $RawGroups.groups |
+            $Groups = $RawGroups.channels |
                 Where-Object {$Name -Contains $_.name}
         }
         elseif ($Name -and$HasWildCard)
         {
-            $AllGroups = $RawGroups.groups
+            $AllGroups = $RawGroups.channels
 
             # allow like operator on each group requested in the param, avoid dupes
             $GroupHash = [ordered]@{}
@@ -87,7 +89,7 @@
         }
         else # nothing specified
         {
-            $Groups = $RawGroups.groups
+            $Groups = $RawGroups.channels
         }
 
         if($Raw)
