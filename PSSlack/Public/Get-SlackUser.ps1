@@ -23,6 +23,13 @@
     .Parameter Raw
         Return raw output.  If specified, Name parameter is ignored
 
+    .PARAMETER Paging
+        If specified, and more data is available when a paging cursor is returned, continue querying Slack until
+            we have retrieved all the data available.
+
+    .PARAMETER MaxQueries
+        Limit the count of API queries to this number.  Only used if you enable -Paging
+
     .EXAMPLE
         Get-SlackUser -Token $Token `
                       -Name ps*
@@ -45,7 +52,9 @@
         [switch]$Presence,
         [switch]$Billing,
         [switch]$ExcludeBots,
-        [switch]$Raw
+        [switch]$Raw,
+        [switch]$Paging,
+        [int]$MaxQueries
     )
     begin
     {
@@ -55,15 +64,35 @@
             $body.add('presence', 1)
         }
 
-        $params = @{
-            Token = $Token
-            Method = 'users.list'
-        }
-        if($body.keys.count -gt 0)
-        {
-            $params.add('body', $Body)
-        }
-        $RawUsers = Send-SlackApi @params
+        $RawUsers = @()
+        $has_more    = $false
+        $Queries     = 0
+        do {
+            $params = @{
+                Token  = $Token
+                Method = 'users.list'
+            }
+            if($body.keys.count -gt 0)
+            {
+                $params.add('Body', $body)
+            }
+            $response = Send-SlackApi @params
+            $Queries++
+            if (-not [string]::IsNullOrEmpty($response.response_metadata.next_cursor))
+            {
+                $has_more = $true
+                $body['cursor'] = $response.response_metadata.next_cursor
+            }
+            else
+            {
+                $has_more = $false
+            }
+            $RawUsers += $response
+        } until (
+            -not $Paging -or
+            -not $has_more -or
+            ($MaxQueries -and $Queries -ge $MaxQueries)
+        )
 
         $HasWildCard = $False
         foreach($Item in $Name)
