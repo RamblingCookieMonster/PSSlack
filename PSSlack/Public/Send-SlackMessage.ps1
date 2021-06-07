@@ -46,6 +46,11 @@ function Send-SlackMessage {
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
 
+    .PARAMETER Thread
+        The id of the parent message you want to thread. This is usually seen as ts or thread_ts in a response.
+
+        Can find a ts by querying https://api.slack.com/methods/conversations.history
+
     .PARAMETER IconUrl
         URL to an image to use as the icon for this message.
 
@@ -265,6 +270,10 @@ function Send-SlackMessage {
         $Username,
 
         [parameter(ParameterSetName = 'Param',
+        ValueFromPipelineByPropertyName = $True)]
+        $Thread,
+
+        [parameter(ParameterSetName = 'Param',
                    ValueFromPipelineByPropertyName = $True)]
         $IconUrl,
 
@@ -322,6 +331,7 @@ function Send-SlackMessage {
             {
                 'channel'     {$body.channel = $channel }
                 'text'        {$body.text     = $text}
+                'thread'      {$body.thread_ts = $Thread}
                 'username'    {$body.username = $username}
                 'asuser'      {$body.as_user = $AsUser}
                 'iconurl'     {$body.icon_url = $iconurl}
