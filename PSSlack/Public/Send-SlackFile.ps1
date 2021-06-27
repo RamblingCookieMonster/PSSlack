@@ -144,6 +144,14 @@
                         $channelContent.Headers.ContentDisposition = $channelHeader
                         $multipartContent.Add($channelContent)
                     }
+                    'Thread' {
+                        # Add Thread
+                        $threadHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+                        $threadHeader.Name = 'thread_ts'
+                        $threadContent = [System.Net.Http.StringContent]::new($Thread)
+                        $threadContent.Headers.ContentDisposition = $threadHeader
+                        $multipartContent.Add($threadContent)
+                    }
                     'FileName' {
                         # Add file name
                         $filenameHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
@@ -208,10 +216,10 @@
                                 "Content-Type: multipart/form-data$LF$LF" +
                                 ($Channel -join ", ") + $LF)}
                 'Thread'     {$bodyLines +=
-                                    ("--$boundary$LF" +
-                                    "Content-Disposition: form-data; name=`"thread_ts`"$LF" +
-                                    "Content-Type: multipart/form-data$LF$LF" +
-                                    "$Thread$LF")}
+                                ("--$boundary$LF" +
+                                "Content-Disposition: form-data; name=`"thread_ts`"$LF" +
+                                "Content-Type: multipart/form-data$LF$LF" +
+                                "$Thread$LF")}
                 'FileName'    {$bodyLines +=
                                 ("--$boundary$LF" +
                                 "Content-Disposition: form-data; name=`"filename`"$LF" +
