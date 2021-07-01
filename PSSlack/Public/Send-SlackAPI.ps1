@@ -64,6 +64,7 @@ function Send-SlackApi
     $Params = @{
         Uri = "https://slack.com/api/$Method"
         ErrorAction = 'Stop'
+        Header = @{ Authorization = "Bearer $Token" }
     }
     if($Proxy) {
         $Params['Proxy'] = $Proxy
@@ -74,7 +75,6 @@ function Send-SlackApi
     if($ForceVerbose) {
         $Params.Add('Verbose', $true)
     }
-    $Body.token = $Token
 
     try {
         $Response = $null
