@@ -25,7 +25,7 @@
 
     .PARAMETER IconUrl
         URL to an image to use as the icon for this message.
-        
+
         If using a token, must be used in conjunction with as_user set to false, otherwise ignored.
 
         See authorship details: https://api.slack.com/methods/chat.postMessage#authorship
@@ -45,6 +45,11 @@
 
     .PARAMETER LinkNames
         Find and link channel names and usernames.
+
+    .PARAMETER Thread
+        Optional thread where file is sent. Needs to be the parent thread id which is either the ts or thread_ts.
+
+        Can find a ts by querying https://api.slack.com/methods/conversations.history
 
     .PARAMETER Parse
         Change how messages are treated. Defaults to none
@@ -168,6 +173,7 @@
         [string]$IconEmoji,
         [switch]$AsUser,
         [switch]$LinkNames,
+        [string]$Thread,
 
         [validateset('full','none')]
         [string]$Parse,
@@ -208,6 +214,7 @@
             'iconurl'     { $body.icon_url     = $iconurl}
             'iconemoji'   { $body.icon_emoji   = $iconemoji}
             'linknames'   { $body.link_names   = 1}
+            'thread'      {$body.thread_ts = $Thread}
             'Parse'       { $body.Parse        = $Parse}
             'UnfurlLinks' { $body.Unfurl_Links = $UnfurlLinks}
             'UnfurlMedia' { $body.Unfurl_Media = $UnfurlMedia}

@@ -22,6 +22,11 @@
     .PARAMETER Channel
         Optional channel, private group, or IM channel to send file to. Can be an encoded ID, or a name.
 
+    .PARAMETER Thread
+        Optional thread where file is sent. Needs to be the parent thread id which is either the ts or thread_ts.
+
+        Can find a ts by querying https://api.slack.com/methods/conversations.history
+
     .PARAMETER FileName
         Required filename for this file.  Used to determine syntax highlighting and other functionality.
 
@@ -75,6 +80,7 @@
         [string]$FileType,
 
         [string[]]$Channel,
+        [string]$Thread,
         [string]$FileName,
         [String]$Title,
         [String]$Comment,
@@ -88,6 +94,7 @@
             switch ($psboundparameters.keys) {
             'Content'     {$body.content     = $content}
             'Channel'     {$body.channels = $Channel -join ", " }
+            'Thread'      {$body.thread_ts = $Thread}
             'FileName'    {$body.filename = $FileName}
             'Title'       {$body.Title = $Title}
             'Comment'     {$body.initial_comment = $Comment}
@@ -136,6 +143,14 @@
                         $channelContent = [System.Net.Http.StringContent]::new(($Channel -join ', '))
                         $channelContent.Headers.ContentDisposition = $channelHeader
                         $multipartContent.Add($channelContent)
+                    }
+                    'Thread' {
+                        # Add Thread
+                        $threadHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+                        $threadHeader.Name = 'thread_ts'
+                        $threadContent = [System.Net.Http.StringContent]::new($Thread)
+                        $threadContent.Headers.ContentDisposition = $threadHeader
+                        $multipartContent.Add($threadContent)
                     }
                     'FileName' {
                         # Add file name
@@ -200,6 +215,11 @@
                                 "Content-Disposition: form-data; name=`"channels`"$LF" +
                                 "Content-Type: multipart/form-data$LF$LF" +
                                 ($Channel -join ", ") + $LF)}
+                'Thread'     {$bodyLines +=
+                                ("--$boundary$LF" +
+                                "Content-Disposition: form-data; name=`"thread_ts`"$LF" +
+                                "Content-Type: multipart/form-data$LF$LF" +
+                                "$Thread$LF")}
                 'FileName'    {$bodyLines +=
                                 ("--$boundary$LF" +
                                 "Content-Disposition: form-data; name=`"filename`"$LF" +
