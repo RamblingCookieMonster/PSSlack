@@ -54,7 +54,8 @@
                                     @{l='Token';e={Decrypt $_.Token}},
                                     Proxy,
                                     MapUser,
-                                    ForceVerbose
+                                    ForceVerbose,
+                                    ContentType
     }
 
 }
