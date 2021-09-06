@@ -71,6 +71,13 @@
 
         See attachments spec https://api.slack.com/docs/attachments
 
+    .PARAMETER Blocks
+        Optional rich structured message blocks.
+
+        Provide one or more hash tables created using New-SlackMessageBlock
+
+        https://api.slack.com/reference/block-kit/blocks
+    
     .EXAMPLE
         # This is a simple example illustrating some common options
         # when constructing a message attachment
@@ -94,30 +101,52 @@
         # Send the newly created message using a token
 
     .EXAMPLE
-        # This example demonstrates that you can chain new attachments
-        # together to form a multi-attachment message
+        # This example demonstrates that you can chain new attachments & blocks
+        # together to form a multi-attachment / multi block message
 
         $Token = 'A token. maybe from https://api.slack.com/docs/oauth-test-tokens'
 
-        New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
-                                   -Title 'The System Is Down' `
-                                   -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
-                                   -Text 'Everybody panic!' `
-                                   -Pretext 'Everything is broken' `
-                                   -Fallback 'Your client is bad' |
-            New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
-                                       -Title 'The Other System Is Down' `
-                                       -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
-                                       -Text 'Please Do The Needful' `
-                                       -Fallback 'Your client is bad' |
-            New-SlackMessage -Channel '@wframe' `
-                             -IconEmoji :bomb: `
-                             -AsUser `
-                             -Username 'SCOM Bot' |
-            Send-SlackMessage -Token $Token
+        $elements_of = New-SlackMessageBlockElement -Type overflow -ActionId "ofId" -Options @{ yes = "Oh Yeah" ; no = "Oh gosh no!" }
+        $elements_ms = New-SlackMessageBlockElement -Type multi_static_select -ActionId "msId" -PlaceHolder "Multi select text" -Options @{ y = "Why not ?" ; n = "I'd rather eat my thongue" ; mb = "Call me... maybe?" } -InitialOptions @{ y ="Why not ?"} -MaxSelectedItems 2
+        $elements_ss = New-SlackMessageBlockElement -Type static_select -ActionId "ssId" -PlaceHolder "Single Select text" -Options @{ y = "Why not ?" ; n = "I'd rather eat my thongue" ; mb = "Call me... maybe?" }  -InitialOption @{ n = "I'd rather eat my thongue" }
 
+        $elements_bt = New-SlackMessageBlockElement -Type button -ActionId "btnOk" -Text "Ok" -Style primary -Value "value_ok" -Url "https://github.com/" | `
+                    New-SlackMessageBlockElement -Type button -ActionId "btnKo" -Text "Ko" -Style danger -Value "value_ko" -Url "https://www.google.fr"
+        $elements_im = New-SlackMessageBlockElement -Type image -AltText "Some alt text" -ImageUrl "https://imgflip.com/s/meme/Conspiracy-Keanu.jpg"
+
+        $blocks = New-SlackMessageBlock -Type header -Text "Lorem Ipsum header" | `
+                New-SlackMessageBlock -Type divider | `
+                New-SlackMessageBlock -Type section -Fields ("*bold*","_underligned_") -Text "Some text before overflow" -Accessory $elements_of | `
+                New-SlackMessageBlock -Type divider | `
+                New-SlackMessageBlock -Type section -Text "Multi select text section" -Accessory $elements_ms | `
+                New-SlackMessageBlock -Type divider | `
+                New-SlackMessageBlock -Type section -Text "Single select text section" -Accessory $elements_ss | `
+                New-SlackMessageBlock -Type divider | `
+                New-SlackMessageBlock -Type actions -Elements $elements_bt | `
+                New-SlackMessageBlock -Type divider | `
+                New-SlackMessageBlock -Type section -Text "Image text section" -Accessory $elements_im
+
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.red `
+                                -Title 'The System Is Down' `
+                                -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                -Text 'Everybody panic!' `
+                                -Pretext 'Everything is broken' `
+                                -Fallback 'Your client is bad' |
+        New-SlackMessageAttachment -Color $_PSSlackColorMap.orange `
+                                    -Title 'The Other System Is Down' `
+                                    -TitleLink https://www.youtube.com/watch?v=TmpRs7xN06Q `
+                                    -Text 'Please Do The Needful' `
+                                    -Fallback 'Your client is bad' |
+        New-SlackMessage -Channel '@wframe' `
+                            -IconEmoji :bomb: `
+                            -AsUser `
+                            -Username 'SCOM Bot' `
+                            -Blocks $blocks |
+        Send-SlackMessage -Token $Token
+
+        # Create a BlockElement of each type, then add it to a block,
         # Create an attachment, create another attachment,
-        # add these to a message,
+        # add these (attachments & blocks) to a message,
         # and send with a token
 
     .EXAMPLE
@@ -184,12 +213,17 @@
         [validateset($True, $False)]
         [bool]$UnfurlMedia,
 
-        [Parameter(Mandatory=$true,
+        [Parameter(Mandatory=$false,
                    ValueFromPipeline = $true,
                    Position=1)]
         [PSTypeName('PSSlack.MessageAttachment')]
         [System.Collections.Hashtable[]]
-        $Attachments
+        $Attachments,
+
+        [Parameter(Mandatory=$false,Position=2)]
+        [PSTypeName('PSSlack.MessageBlock')]
+        [System.Collections.Hashtable[]]
+        $Blocks
     )
     Begin
     {
@@ -210,7 +244,7 @@
             'channel'     { $body.channel      = $Channel}
             'text'        { $body.text         = $text}
             'username'    { $body.username     = $username}
-            'asuser'     { $body.as_user       = $AsUser}
+            'asuser'      { $body.as_user      = $AsUser}
             'iconurl'     { $body.icon_url     = $iconurl}
             'iconemoji'   { $body.icon_emoji   = $iconemoji}
             'linknames'   { $body.link_names   = 1}
@@ -219,7 +253,8 @@
             'UnfurlLinks' { $body.Unfurl_Links = $UnfurlLinks}
             'UnfurlMedia' { $body.Unfurl_Media = $UnfurlMedia}
             'iconurl'     { $body.icon_url     = $iconurl}
-            'attachments' { $body.attachments   = @($AllAttachments)}
+            'attachments' { $body.attachments  = @($AllAttachments)}
+            'blocks'	  { $body.blocks       = @($Blocks)}
         }
 
         Add-ObjectDetail -InputObject $body -TypeName PSSlack.Message
