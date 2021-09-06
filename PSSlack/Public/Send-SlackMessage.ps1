@@ -383,7 +383,7 @@ function Send-SlackMessage {
                     $ProxyParam.Add('Verbose', $true)
                 }
                 $json = ConvertTo-Json -Depth 6 -Compress -InputObject $Message
-                Invoke-RestMethod @ProxyParam -Method Post -Body $json -Uri $Uri
+                Invoke-RestMethod @ProxyParam -Method Post -Body $json -Uri $Uri -ContentType "application/json; charset=utf-8"
             }
             else
             {
