@@ -79,7 +79,7 @@ function Send-SlackApi
     }
     try {
         $Response = $null
-        $Response = Invoke-RestMethod @Params -Body $Body
+        $Response = Invoke-RestMethod -Header $headers @Params -Body $Body
     }
     catch {
         # (HTTP 429 is "Too Many Requests")
