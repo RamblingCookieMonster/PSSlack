@@ -74,11 +74,12 @@ function Send-SlackApi
     if($ForceVerbose) {
         $Params.Add('Verbose', $true)
     }
-    $Body.token = $Token
-
+    $headers = @{
+        Authorization="Bearer $Token"
+    }
     try {
         $Response = $null
-        $Response = Invoke-RestMethod @Params -Body $Body
+        $Response = Invoke-RestMethod -Header $headers @Params -Body $Body
     }
     catch {
         # (HTTP 429 is "Too Many Requests")
