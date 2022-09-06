@@ -107,8 +107,6 @@
 
                 if($Raw)
                 {
-                    $link = "$($Script:PSSlack.ArchiveUri)/$($response.channel)/p$($response.ts -replace '\.')"
-                    $response | Add-Member -MemberType NoteProperty -Name link -Value $link
                     $response
                 }
                 else
